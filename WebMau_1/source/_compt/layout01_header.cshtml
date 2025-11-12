@@ -1,0 +1,501 @@
+﻿@inherits MyWebPage
+@using SLK.Common
+@functions {
+    [Component(Type = ComptType.Page_Element,
+        ComptName = "en:Page header component|vi:Thành phần đầu trang")]
+    public class ViewModel
+    {
+        public IDictionary<string, string> Phrases { get; set; } = new Dictionary<string, string>();
+
+        public static ViewModel Default => new ViewModel() { };
+
+    }/*end_viewmodel*/
+    private ViewModel _data;
+    private ViewModel Data => _data ?? (_data = ViewModel.Default);
+    private MyTranslator Text => new MyTranslator(Data?.Phrases);
+}
+@{
+    var query = Request.Url.Query;
+    if (query == "?logout")
+    {
+        if (Request.Cookies["jwt"] != null)
+        {
+            HttpCookie cookiejwt = new HttpCookie("jwt");
+            cookiejwt.Expires = DateTime.Now.AddDays(-30);
+            Response.Cookies.Add(cookiejwt);
+        }
+        Response.Redirect("/");
+    }
+
+    _data = LoadData<ViewModel>(key: $"{LangId}-{FileName}");
+    Layout = IsDirectCall ? "~/_layouts/_empty.cshtml" : null;
+    var cart = new ShoppingCart(this.Context);
+
+    var cookie = Context.Request.Cookies;
+}
+
+<header>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary nav1">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarNav">
+                    <ul class="navbar-nav nav1-ul">
+                        <li class="nav-item nav1-item">
+                            <a class="nav-link" aria-current="page" href="#">About Us</a>
+                        </li>
+                        <li class="nav-item nav1-item">
+                            <a class="nav-link" href="/user-profile">My Account</a>
+                        </li>
+                        <li class="nav-item nav1-item">
+                            <a class="nav-link" href="#">Wishlist</a>
+                        </li>
+                        <li class="nav-item nav1-item">
+                            <a class="nav-link" href="#">Order Tracking</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav nav1-ul nav1Right">
+                        <li class="nav-item nav1-item">
+                            <a class="nav-link" aria-current="page" href="#">
+                                Need help? Call us: <span>
+                                    +1800
+                                    900
+                                </span>
+                            </a>
+                        </li>
+                        <li class="nav1Language position-relative">
+                            <div class="dropDownEffect-Items">
+                                <ul class="list-group dropDownEffect-list">
+                                    <li class="list-group-item">
+                                        <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown"
+                                           aria-expanded="false">
+                                            Language&nbsp;<i class="fa-solid fa-chevron-down"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdownMenu">
+                                            <li class="list-group-item">
+                                                <a href="">
+                                                    <img src="../assets/imgs/theme/icons/united-states.png" width="20px"
+                                                         alt="">&nbsp;American
+                                                </a>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <a href="">
+                                                    <img src="../assets/imgs/theme/icons/germany.png" width="20px"
+                                                         alt="">&nbsp;Germany
+                                                </a>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <a href="">
+                                                    <img src="../assets/imgs/theme/icons/vietnam.png" width="20px"
+                                                         alt="">&nbsp;Tiếng Việt
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav1Language position-relative">
+                            <div class="dropDownEffect-Items">
+                                <ul class="list-group dropDownEffect-list">
+                                    <li class="list-group-item">
+                                        <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown"
+                                           aria-expanded="false">
+                                            USD&nbsp;<i class="fa-solid fa-chevron-down"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdownMenu currencyList">
+                                            <li class="list-group-item">
+                                                <a href="">
+                                                    <img src="../assets/imgs/theme/icons/united-states.png" width="20px"
+                                                         alt="">&nbsp;Dollar
+                                                </a>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <a href="">
+                                                    <img src="../assets/imgs/theme/icons/germany.png" width="20px"
+                                                         alt="">&nbsp;Euro
+                                                </a>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <a href="">
+                                                    <img src="../assets/imgs/theme/icons/vietnam.png" width="20px"
+                                                         alt="">&nbsp;VND
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+        <nav class="navbar navbar-expand-lg bg-body-tertiary border">
+            <div class="container-fluid justify-content-start">
+                <a href="#">
+                    <img class="logo" src="../assets/imgs/theme/logo.svg" width="180px">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="searchForm">
+                    <form class="d-flex searchGroup" role="search">
+                        <div class="input-group">
+                            <div class="input-group mb-3 searchInput position-relative">
+                                <button class="btn dropdown-toggle dropdownSearch" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    All Categories &nbsp;<i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <ul class="dropdown-menu searchMenu">
+                                    <li><input type="text" class="searchMenuInput"></li>
+                                    <div class="searchMenuList">
+                                    <li><a class="dropdown-item searchMenuItem" href="#">All Categories</a></li>
+                                    <li><a class="dropdown-item searchMenuItem" href="#">Milk and Dairies</a></li>
+                                    <li><a class="dropdown-item searchMenuItem" href="#">Wines & Alcohol</a></li>
+                                    <li><a class="dropdown-item searchMenuItem" href="#">Clothing & Beauty</a></li>
+                                    <li><a class="dropdown-item searchMenuItem" href="#">Wines & Alcohol</a></li>
+                                    <li><a class="dropdown-item searchMenuItem" href="#">Pet Foods & Toy</a></li>
+                                    <li><a class="dropdown-item searchMenuItem" href="#">Fast food</a></li>
+                                    <li><a class="dropdown-item searchMenuItem" href="#">Vegetables</a></li>
+                                    <li><a class="dropdown-item searchMenuItem" href="#">Fresh Seafood</a></li>
+                                    <li><a class="dropdown-item searchMenuItem" href="#">Noodles & Rice</a></li>
+                                    <li><a class="dropdown-item searchMenuItem" href="#">Ice cream</a></li>
+                            </div>
+                            </ul>
+                            <input type="text" class="form-control searchTextbox" placeholder="Search for items..."
+                                   aria-label="Text input with dropdown button">
+                            <button class="searchBtn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        </div>
+
+                </div>
+                </form>
+            </div>
+    </div>
+
+    <div class="collapse navbar-collapse d-flex justify-content-end w-100" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex nav2Menu">
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="faIcons fa-solid fa-arrows-rotate position-relative">
+                        <span class="notiCount">3</span>
+                    </i>&nbsp;Compare
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="faIcons fa-regular fa-heart position-relative">
+                        <span class="notiCount">6</span>
+                    </i>&nbsp;Wishlish
+                </a>
+            </li>
+            <li class="cartLink position-relative">
+                <div class="dropDownEffect-Items">
+                    <ul class="list-group dropDownEffect-list cartItemList">
+                        <li class="list-group-item">
+                            <a class="nav-link" href="/view-cart" aria-expanded="false">
+                                <i class="faIcons fa-solid fa-cart-shopping position-relative">
+                                    <span class="notiCount cartQty">0</span>
+                                </i>&nbsp;
+                                Cart
+                            </a>
+                            <ul class="dropdown-menu dropdownMenu p-3 listCartItems">
+
+                                @* gio hang render o day *@
+                                <li class="miniCartItems">
+
+                                </li>
+
+                                <li class="cartItem list-group-item d-flex justify-content-between mb-2 miniCartOptions">
+                                    <div class="cartView">
+                                        <span>Total</span><br>
+                                        <button class="btn btn-outline-success mt-3 viewCartBtn">
+                                            <a href="/view-cart">View cart</a>
+                                        </button>
+                                    </div>
+                                    <div class="cartCheckout">
+                                        <span class="miniCartTotalMoney">$0</span><br>
+                                        <button type="button" class="btn btn-success mt-3 CheckoutBtn">Checkout</button>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            @if (cookie.Get("jwt") != null)
+            {
+                <li class="position-relative">
+                    <div class="dropDownEffect-Items">
+                        <ul class="list-group dropDownEffect-list accountItemList">
+                            <li class="list-group-item position-relative">
+                                <a class="nav-link" href="/user-profile">
+                                    <i class="faIcons fa-regular fa-user"></i>&nbsp;Account
+                                </a>
+                                <ul class="accountMenu dropdown-menu dropdownMenu p-3 list-group list-group-flush">
+                                    <a href="/user-profile">
+                                    <li class="list-group-item">
+                                        <i class="fa-regular fa-user"></i>&nbsp;My Account
+                                    </li>
+                                    </a>
+                                    <a href="">
+                                    <li class="list-group-item">
+                                        <i class="fa-solid fa-location-dot"></i>&nbsp;Order Tracking
+                                    </li>
+                                    </a>
+                                    <a href="">
+                                    <li class="list-group-item">
+                                        <i class="fa-solid fa-tag"></i>&nbsp;My
+                                        Voucher
+                                    </li>
+                                    </a>
+                                    <a href="">
+                                    <li class="list-group-item">
+                                        <i class="fa-regular fa-heart"></i>&nbsp;My
+                                        Wishlist
+                                    </li>
+                                    </a>
+                                    <a href="">
+                                    <li class="list-group-item">
+                                        <i class="fa-solid fa-gear"></i>&nbsp;Setting
+                                    </li>
+                                    </a>
+                                    <a href="?logout">
+                                    <li class="list-group-item">
+                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>&nbsp;Sign out
+                                    </li>
+                                    </a>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            }
+            else
+            {
+                <li class="nav-item">
+                    <a class="nav-link" href="/dang-ky-dang-nhap">
+                        <i class="faIcons fa-regular fa-user position-relative"></i>&nbsp;Login
+                    </a>
+                </li>
+            }
+        </ul>
+        </nav>
+    </div>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary p-3 nav3">
+        <div class="container-fluid p-0">
+            <div class="btn-group">
+                <button type="button" class="btn btn-success dropdown-toggle nav3BtnDropDown"
+                        data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="false">
+                    <i class="fa-solid fa-border-all"></i>&nbsp;Browse all categories
+                </button>
+                <ul class="dropdown-menu categoriesBrowse">
+                    <div class="row">
+                        <div class="col">
+                            <div>
+                                <img src="../assets/imgs/theme/icons/category-1.svg" alt="" width="30px">
+                                <a href="">Milk and Dairies</a>
+                            </div>
+                            <div>
+                                <img src="../assets/imgs/theme/icons/category-2.svg" alt="" width="30px">
+                                <a href="">Fresh Fruit</a>
+                            </div>
+                            <div>
+                                <img src="../assets/imgs/theme/icons/category-3.svg" alt="" width="30px">
+                                <a href="">Clothing & beauty</a>
+                            </div>
+                            <div>
+                                <img src="../assets/imgs/theme/icons/category-4.svg" alt="" width="30px">
+                                <a href="">Pet Foods & Toy</a>
+                            </div>
+                            <div>
+                                <img src="../assets/imgs/theme/icons/category-5.svg" alt="" width="30px">
+                                <a href="">Baking material</a>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div>
+                                <img src="../assets/imgs/theme/icons/category-6.svg" alt="" width="30px">
+                                <a href="">Wines & Drinks</a>
+                            </div>
+                            <div>
+                                <img src="../assets/imgs/theme/icons/category-7.svg" alt="" width="30px">
+                                <a href="">Fresh Seafood</a>
+                            </div>
+                            <div>
+                                <img src="../assets/imgs/theme/icons/category-8.svg" alt="" width="30px">
+                                <a href="">Fast food</a>
+                            </div>
+                            <div>
+                                <img src="../assets/imgs/theme/icons/category-9.svg" alt="" width="30px">
+                                <a href="">Vegetables</a>
+                            </div>
+                            <div>
+                                <img src="../assets/imgs/theme/icons/category-10.svg" alt="" width="30px">
+                                <a href="">Bread and Juice</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center showMoreBtn">
+                        <div class="d-inline plusIcon"><i class="fa-solid fa-plus"></i></div>
+                        &nbsp;<span>Show more...</span>
+                    </div>
+                </ul>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 nav3Menu">
+                    @{ var mainMenus = Root.Config.MainMenus; }
+                    @foreach (var item in mainMenus.EmptyIfNull().Select((x, y) => new { x, y }))
+                    {
+                        if (item.y == 0)
+                        {
+
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="#">
+                                    <i class="fa-solid fa-fire"></i>&nbsp;@mainMenus[0].Title
+                                </a>
+                            </li>
+
+                        }
+                        else
+                        {
+                            <div class="dropDownEffect-Items">
+                                <ul class="list-group dropDownEffect-list">
+                                    <li class="list-group-item position-relative">
+                                        <a class="nav-link @(item.y == 1? "home":"")" href="@item.x.Href"
+                                           aria-expanded="false">
+                                            @item.x.Title&nbsp;@(!item.x.SubMenus.EmptyIfNull().Any()? "" : "<i class='fa-solid fa-chevron-down'></i>")
+                                        </a>
+
+                                        @{ var hasImg = item.x.SubMenus.Where(h => !string.IsNullOrEmpty(h.ImageUrl)).Any(); }
+
+                                        @foreach (var sub in item.x.SubMenus.EmptyIfNull().Select((x, y) => new { x, y }))
+                                        {
+                                            if (hasImg && sub.y == 0)
+                                            {
+                                                @("<ul class=\"megaMenu d-flex justify-content-between homeLinks accountMenu dropdown-menu dropdownMenu p-3 ps-4\">")
+
+                                                if (string.IsNullOrEmpty(sub.x.ImageUrl))
+                                                {
+                                                    @("<div class=\"d-inline w-25\">")
+
+                                                    <a href="@sub.x.Href">
+                                                <li class="">
+                                                    <h5>@sub.x.Title</h5>
+                                                </li>
+                                                </a>
+
+                                                foreach (var subLv2 in sub.x.SubMenusLv2.EmptyIfNull().Select((a, b) => new { a, b }))
+                                                {
+                                                    <a href="@subLv2.a.Href">
+                                                    <li class="">@subLv2.a.Title</li>
+                                                    </a>
+
+                                                    var j = subLv2.b;
+                                                    var i = sub.x.SubMenusLv2.Count() - 1;
+
+                                                    @(subLv2.b == sub.x.SubMenusLv2.Count() - 1 ? "</div>" : "")
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="d-inline w-25 mt-2 megaMenuImg position-relative">
+                                                    <img src="@sub.x.ImageUrl" alt="" width="400px"
+                                                         height="300px">
+                                                    <div class="mMenuImgText">
+                                                        <span>HOT DEALS <br> Don't miss <br> Trending</span>
+                                                        <h3>Save to 50%</h3>
+                                                        <button class="btn btn-success" type="button">Shop now</button>
+                                                    </div>
+                                                    <div class="mMenuImgSaleText d-flex justify-content-center align-items-center">
+                                                        <span>25% <br> off</span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+
+                                        if (hasImg && sub.y != 0)
+                                        {
+                                            if (string.IsNullOrEmpty(sub.x.ImageUrl))
+                                            {
+                                                <div class="d-inline w-25">
+
+                                                    <a href="@sub.x.Title">
+                                                <li class="">
+                                                    <h5>@sub.x.Title</h5>
+                                                </li>
+                                                </a>
+
+                                                @foreach (var subLv2 in sub.x.SubMenusLv2.EmptyIfNull().Select((a, b) => new { a, b }))
+                                                {
+                                                    <a href="@subLv2.a.Href">
+                                                    <li class="">@subLv2.a.Title</li>
+                                                    </a>
+
+                                                }
+                                        </div>
+
+                                        @(sub.y == item.x.SubMenus.Count() - 1 ? "</ul>" : "")
+                                    }
+                                    else
+                                    {
+                                        <div class="d-inline w-25 mt-2 megaMenuImg position-relative">
+                                            <img src="@sub.x.ImageUrl" alt="" width="400px"
+                                                 height="300px">
+                                            <div class="mMenuImgText">
+                                                <span>HOT DEALS <br> Don't miss <br> Trending</span>
+                                                <h3>Save to 50%</h3>
+                                                <button class="btn btn-success" type="button">Shop now</button>
+                                            </div>
+                                            <div class="mMenuImgSaleText d-flex justify-content-center align-items-center">
+                                                <span>25% <br> off</span>
+                                            </div>
+                                        </div>
+                                        @(sub.y == item.x.SubMenus.Count() - 1 ? "</ul>" : "")
+                                    }
+
+                                }
+                                if (!hasImg && sub.y == 0)
+                                {
+                                    @("<ul class=\"nav3DropRight homeLinks accountMenu dropdown-menu dropdownMenu p-3 list-group list-group-flush\">")
+                                    <a href="">
+                                    <li class="list-group-item">@sub.x.Title</li>
+                                    </a>
+                                }
+                                if (!hasImg && sub.y != 0)
+                                {
+                                    <a href="">
+                                    <li class="list-group-item">@sub.x.Title</li>
+                                    </a>
+                                    @(sub.y == item.x.SubMenus.Count() - 1 ?"</ul>":"")
+                                }
+                            }
+                                        </li>
+                                    </ul>
+                                </div>
+                            }
+                        }
+                    </ul>
+                </div>
+
+                <div class="nav3Contact">
+                    <div class="nav3ContactIcon">
+                        <i class="fa-regular fa-headphones"></i>
+                    </div>
+                    <div class="nav3ContactInfo">
+                        <div>
+                            <h3>1900 - 888</h1>
+                        </div>
+                        <div>
+                            24/7 support center</p>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>

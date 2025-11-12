@@ -1,0 +1,215 @@
+﻿@inherits MyWebPage
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi" class="loading-site no-js">
+<head>
+    <base href="/" />
+    <meta charset="utf-8">
+    <title>@(Page.Title != null ? Page.Title + " - " : string.Empty)@Root.Config.WebTitle</title>
+    <meta name="description" content="@Page.Description">
+    <!-- responsive tag -->
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="@Html.Encode(@Page.Keywords)">
+    <!-- favicon -->
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="@Root.Config.Favicon">
+
+    <link rel="icon" href="@Root.Config.Favicon" sizes="32x32">
+    <link rel="icon" href="@Root.Config.Favicon" sizes="192x192">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+    <link href="~/assets/css/animate.css" rel="stylesheet" />
+    <link href="~/assets/css/animate.min.css" rel="stylesheet" />
+    <link href="~/assets/css/home1.css" rel="stylesheet" />
+    <link href="~/assets/css/owl.carousel.min.css" rel="stylesheet" />
+    <link href="~/assets/css/owl.theme.default.min.css" rel="stylesheet" />
+    <link href="~/assets/css/product.css" rel="stylesheet" />
+    <link href="~/assets/css/slick-theme.css" rel="stylesheet" />
+    <link href="~/assets/css/slick.css" rel="stylesheet" />
+    <link href="~/assets/css/shopgrid.css" rel="stylesheet" />
+    <link href="~/assets/css/Register.css" rel="stylesheet" />
+    <link href="~/assets/css/Profile.css" rel="stylesheet" />
+    <link href="~/assets/css/chat.css" rel="stylesheet" />
+
+    @RenderSection("head", required: false)
+</head>
+<body class="defult-home">
+
+    <div class="popup" style="display:none;"><div class="cartNotification"></div></div>
+
+    @RenderPage("/_compt/layout01_header.cshtml")
+    @RenderBody()
+    @RenderPage("/_compt/layout01_footer.cshtml")
+
+    @*<iframe id="chatBoxIfr" src="/chat/?user=kiendeptrai123&branchguid=quan8&branchname=quan8&domain=slk.com"
+            style="
+            position:fixed;
+            z-index:888;
+            bottom:0px;
+            right:10px;
+            height:70px;
+            width:70px;
+            max-height:450px;
+            max-width:320px;
+            border: 0;
+            ">
+    </iframe>*@
+
+    <script src="~/assets/js/jquery.js"></script>
+    <script src="~/assets/js/jquery-migrate.js"></script>
+    <script src="~/assets/js/jquery.signalR-2.4.3.min.js"></script>
+    <script src="/signalr/hubs"></script>
+    <script src="~/assets/js/popper.js"></script>
+    <script src="~/assets/js/bootstrap.js"></script>
+    <script src="~/assets/js/owl.carousel.min.js"></script>
+    <script src="~/assets/js/wow.min.js"></script>
+    <script src="~/assets/js/slick.min.js"></script>
+    <script src="~/assets/js/zoom.js"></script>
+    <script src="~/assets/js/swal.js"></script>
+    <script src="~/assets/js/home1.js"></script>
+    <script src="~/assets/js/sticksy.min.js"></script>
+    <script src="~/assets/js/product.js"></script>
+    <script src="~/assets/js/Register.js"></script>
+    @RenderSection("scripts", required: false)
+
+    <script>
+
+        //box chat animation
+        $(window).on('message', function (e) {
+            const event = e.originalEvent;
+            if (event.data && event.data.type === 'KienCodeJSVip') {
+                $('#chatBoxIfr').css({
+                    'width': '400px',
+                    'height': '600px'
+                });
+            }
+            else if (event.data && event.data.type === 'KienDevLoTapCode2025') {
+                $('#chatBoxIfr').css({
+                    'width': '100px',
+                    'height': '100px'
+                });
+            }
+        })
+
+        //show sweet alert
+        function showAlert(title, text, icon) {
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: icon
+            });
+        }
+
+        //cap nhat gio hang
+        function reloadCart() {
+            $.ajax({
+                url: '/_compt/cart_handler.cshtml',
+                type: 'GET',
+                data: { action: 'getCart' },
+                success: function (res) {
+                    if (res.success) {
+                        $('.cartQty').text(res.totalQty);
+                        $('li.newCartItem').remove();
+                        $('.miniCartItems').html(res.html);
+                        $('span.miniCartTotalMoney').text(`$ ${res.totalMoney}`);
+                    }
+                    else {
+                        $('.miniCartItems').html(res.message);
+                    }
+                },
+                error: function (er) {
+                    console.log('error', er);
+                }
+            });
+        }
+
+        $(() => {
+            reloadCart();
+        })
+
+        //xu ly them gio hang
+        function showNotification(message) {
+            $('.popup').fadeIn();
+            $('.cartNotification').text(message);
+
+            setTimeout(() => {
+                $('.popup').fadeOut();
+            }, 3000)
+        }
+
+        $("button.detail-btnAddToCart").on("click", function (e) {
+            e.preventDefault();
+            $('.cartNotification').css('background-color', '#3BB77E');
+
+            var productId = $(this).attr("productId");
+            var quantity = ($("#quantity").val() ?? 0) == 0 ? 1 : $("#quantity").val();
+
+            $.ajax({
+                url: '/_compt/cart_handler.cshtml',
+                type: 'POST',
+                data: {
+                    action: "add",
+                    productId: productId,
+                    quantity: quantity
+                },
+                success: function (res) {
+                    if (res.success) {
+                        showNotification(`Added ${quantity} product to cart!!!`);
+                        reloadCart();
+                    }
+                    else {
+                        console.log('error ' + res.message);
+                    }
+                },
+                error: function (er) {
+                    console.log('error' + er);
+                }
+            });
+        })
+
+        // xoa san pham khoi gio hang
+        $(document).on('click', 'a.removeFromCart', function (e) {
+            e.preventDefault();
+            var productId = $(this).attr('data-productId');
+
+            $.ajax({
+                url: '/_compt/cart_handler.cshtml',
+                type: 'POST',
+                data: {
+                    action: 'remove',
+                    productId: productId
+                },
+                success: function (res) {
+                    if (res.success) {
+                        $('.cartNotification').css('background-color', 'red');
+                        showNotification(res.message);
+                        reloadCart();
+                    }
+                    else {
+                        alert(res.message);
+                    }
+                }, error: function (er) {
+                    alert('error', er);
+                }
+            })
+        })
+
+        //checkout
+        $('button.CheckoutBtn').on('click', function () {
+            var text = $('span.miniCartTotalMoney').text();
+            var number = text.replace('$', '');
+
+            if (number == 0) {
+                showAlert('failed', 'Please add products to cart to checkout!', 'warning');
+                return;
+            }
+            window.location.href = '/shopping-checkout';
+        })
+
+    </script>
+
+</body>
+</html>

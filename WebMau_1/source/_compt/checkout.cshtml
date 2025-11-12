@@ -1,0 +1,329 @@
+﻿@inherits MyWebPage
+@using SLK.Common
+@functions {
+    [Component(
+        Type = ComptType.Page_Template,
+        ComptName = "en:Checkout page template|vi:Mẫu trang xác nhận mua hàng",
+        PathPostfix = "/{0}",
+        PageType = "single", NodeType = "product")]
+
+    public class ViewModel : PageListModel
+    {
+        public static ViewModel Default => new ViewModel()
+        {
+            Title = "Shopping checkout",
+        };
+
+        public ShoppingCart Cart { get; set; }
+        public VM_Customer Customer { get; set; }
+    }
+
+    /*end_viewmodel*/
+    private ViewModel _data;
+    private ViewModel Data => _data ?? (_data = ViewModel.Default);
+    private MyTranslator Text => new MyTranslator(Data?.Phrases);
+
+}
+@{
+    if (IsPost)
+    {
+        Response.ContentType = "application/json";
+        if (Request["action"] == "order")
+        {
+            var cart = new ShoppingCart(this.Context);
+            Db.Insert(new PP_Order
+            {
+                Date = DateTime.Now,
+                TotalAmount = cart.GetTotal(),
+                PayMethod = Request["paymethod"],
+                Name = Request["name"],
+                DeliveryAddress = Request["deliveryaddress"],
+                Province = Request["province"],
+                Email = Request["email"],
+                Note = Request["note"],
+                Phone = Request["phone"],
+                Ward = Request["district"]
+            });
+
+            cart.Clear();
+
+            Response.Write(Json.Encode(new
+            {
+                success = true,
+                message = "Order success, thanks for using our service!!!"
+            }));
+            return;
+        }
+    }
+
+    _data = LoadData<ViewModel>
+(key: $"{LangId}-{FileName}#{NodeSlug}", setup: (model) =>
+{
+    model = model ?? new ViewModel();
+
+    model.Cart = new ShoppingCart(this.Context);
+
+    if (Request.Cookies.Get("jwt") != null)
+    {
+        string token = Request.Cookies["jwt"].Value.ToString();
+
+        var validated = new JwtHandler().ValidateJWT(token);
+
+        int id = Convert.ToInt32(validated.FindFirst("uid")?.Value);
+
+        model.Customer = Db.Table<PP_Customer>()
+                .Where(x => x.Id == id)
+                .Select(x => new VM_Customer
+                {
+                    Username = x.UserId,
+                    Email = x.Email,
+                    Address = x.Address,
+                    City = x.City,
+                    Commune = x.Commune,
+                    Ward = x.Ward,
+                    PhoneNumber = x.PhoneNumber,
+                    DisplayName = x.DisplayName
+                })
+                .EmptyIfNull().FirstOrDefault();
+    }
+    else
+    {
+        model.Customer = null;
+    }
+
+    var page = Db.GetOne<PP_Page>
+(PageId);
+    if (page == null) return null;
+
+    model.Title = page.Title;
+    model.MetaDescription = page.MetaDescription;
+    model.MetaKeywords = page.MetaKeywords;
+    return model;
+});
+
+    Layout = $"~/_layouts/_layout{Root.LayoutId}.cshtml";
+    Page.Title = Data.Title;
+    Page.Description = Data.MetaDescription;
+    Page.Keywords = Data.MetaKeywords;
+    Page.IndexPageRunning = true;
+}
+
+@{
+    var isNull = Data.Customer == null ? true : false;
+    var isNull2 = Data.Cart == null ? true : false;
+}
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.htm" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                <span>></span> Shop
+                <span>></span> Checkout
+            </div>
+        </div>
+    </div>
+    <div class="container mb-80 mt-50">
+        <div class="row">
+            <div class="col-lg-8 mb-40">
+                <h1 class="heading-2 mb-10">Checkout</h1>
+                <div class="d-flex justify-content-between">
+                    <h6 class="text-body">There @(isNull2 ? "is" : (Data.Cart.GetQuantity() == 1 ? "is" : "are")) <span class="text-brand">@(isNull2 ? 0 : Data.Cart.GetQuantity())</span> products in your cart</h6>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="row">
+                    <h4 class="mb-30">Billing Details</h4>
+                    <form id="checkoutForm">
+                        <div class="row">
+                            <div class="form-group">
+                                <input type="text" required="" name="FullName" placeholder="Full name *" value="@(isNull? "" : Data.Customer.DisplayName)">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <input type="text" name="DeliveryAddress" required="" placeholder="Address *" value="@(isNull? "" : Data.Customer.Address)">
+                            </div>
+                        </div>
+                        <div class="row shipping_calculator">
+                            <div class="form-group col-lg-6">
+                                <div class="custom_select">
+                                    <select id="ddProvince" name="Province" class="form-control select-active">
+                                        <option value="0" disabled>Select City...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <div class="custom_select">
+                                    <select id="ddWard" name="District" class="form-control select-active">
+                                        <option value="0" disabled>Select Ward...</option>
+                                    </select> 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <input required="" type="text" name="Phone" placeholder="Phone *" value="@(isNull? "" : Data.Customer.PhoneNumber)">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <input required="" type="text" name="Email" placeholder="Email address *" value="@(isNull? "": Data.Customer.Email)">
+                            </div>
+                        </div>
+                        <div class="form-group mb-30">
+                            <textarea rows="5" name="Note" placeholder="Additional information"></textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="border p-40 cart-totals ml-30 mb-50">
+                    <div class="d-flex align-items-end justify-content-between mb-30">
+                        <h4>Your Order</h4>
+                        <h6 class="text-muted">Subtotal</h6>
+                    </div>
+                    <div class="divider-2 mb-30"></div>
+                    <div class="table-responsive order_table checkout">
+                        <table class="table no-border">
+                            <tbody>
+                                @if (!isNull2)
+                                {
+                                    foreach (var item in Data.Cart.GetCartLines().EmptyIfNull())
+                                    {
+                                        <tr>
+                                            <td class="image product-thumbnail"><img src="@item.Product.ImageUrl" alt="product"></td>
+                                            <td>
+                                                <h6 class="w-160 mb-5"><a href="shop-product-full" class="text-heading">@item.Product.Title</a></h6>
+                                                <div class="product-rate-cover">
+                                                    <div class="product-rate d-inline-block">
+                                                        <div class="product-rating" style="width:90%">
+                                                        </div>
+                                                    </div>
+                                                    <span class="font-small ml-5 text-muted"> (4.0)</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <h6 class="text-muted pl-20 pr-20">x @item.Quantity</h6>
+                                            </td>
+                                            <td>
+                                                <h4 class="text-brand">$@((item.Product.PromotionPrice == 0 ? item.Product.Price : item.Product.PromotionPrice) * item.Quantity)</h4>
+                                            </td>
+                                        </tr>
+
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="payment ml-30">
+                    <h4 class="mb-30">Payment</h4>
+                    <div class="payment_option">
+                        <div class="custome-radio">
+                            <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" checked="" data-payMethod="bankTranfer">
+                            <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Direct Bank Transfer</label>
+                        </div>
+                        <div class="custome-radio">
+                            <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios4" checked="" data-payMethod="checkPayment">
+                            <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Cash on delivery</label>
+                        </div>
+                        <div class="custome-radio">
+                            <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios5" checked="" data-payMethod="paypal">
+                            <label class="form-check-label" for="exampleRadios5" data-bs-toggle="collapse" data-target="#paypal" aria-controls="paypal">Online Getway</label>
+                        </div>
+                    </div>
+                    <div class="payment-logo d-flex">
+                        <img class="mr-15" src="assets/imgs/theme/icons/payment-paypal.svg" alt="">
+                        <img class="mr-15" src="assets/imgs/theme/icons/payment-visa.svg" alt="">
+                        <img class="mr-15" src="assets/imgs/theme/icons/payment-master.svg" alt="">
+                        <img src="assets/imgs/theme/icons/payment-zapper.svg" alt="">
+                    </div>
+                    <a href="#" class="btn btn-fill-out btn-block mt-30 btnOrder">Place an Order<i class="fa-solid fa-cart-shopping"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<link rel="stylesheet" href="~/assets/css/main-1.css" />
+
+@section scripts {
+    <script>
+        $(() => {
+
+            //get API tinh thanh
+            $.get("https://provinces.open-api.vn/api/v2/?depth=2", function (data) {
+
+                data.forEach(function (item) {
+                    $('#ddProvince').append(`<option value=${item.code}>${item.name}</option>`);
+                })
+
+                $('#ddProvince').on('change', function () {
+                    $('#ddWard').html('<option value="0" disabled>Select Ward...</option>');
+                    var code = $('#ddProvince :selected').val();
+                    if (code == 0) return;
+                    var city = data.find(function (item1) {
+                        return (item1.code == code) ? item1 : "";
+                    })
+                    city.wards.forEach(function (item2) {
+                        $('#ddWard').append(`<option value="${item2.code}">${item2.name}</option>`);
+                    })
+                })
+            })
+
+            setTimeout(() => {
+                $('#ddProvince').val(@(isNull ? 0 : Data.Customer.City)).trigger('change');
+                $('#ddWard').val(@(isNull ? 0 : Data.Customer.Ward)).trigger('change');
+            }, 300)
+
+        })
+
+
+        //order
+        $('.btnOrder').on('click', function (e) {
+            e.preventDefault();
+
+            var userForm = {};
+            $('#checkoutForm [name]').each(function () {
+                var name = $(this).attr('name');
+
+                if ($(this).is('select')) {
+                    userForm[name] = $(this).find('option:selected').text();
+                } else {
+                    userForm[name] = $(this).val();
+                }
+            })
+
+            var method = $('input[name="payment_option"]:checked').data('paymethod');
+            userForm['paymethod'] = method;
+
+            $.ajax({
+                url: '/@NodeSlug/?action=order',
+                type: 'POST',
+                data: userForm,
+                success: function (res) {
+                    if (res.success) {
+                        Swal.fire({
+                            title: 'success',
+                            text: res.message,
+                            icon: 'success',
+                            showConfirmButton: false,
+                            allowOutsideClick: false
+                        });
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 3000)
+                    } else {
+                        showAlert('error', res.message, 'error');
+                    }
+                }, error: function (err) {
+                    showAlert('error', 'Sorry for the inconvenience, an unknown error occurred, please reload the page!', 'error');
+                    console.log('error', err);
+                }
+            })
+        })
+    </script>
+}

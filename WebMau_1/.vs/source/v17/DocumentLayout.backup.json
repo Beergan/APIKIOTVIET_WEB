@@ -1,0 +1,287 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\admin\\product\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\admin\\product\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\admin\\product\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\admin\\product\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\app_code\\entiies\\pp_product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\app_code\\entiies\\pp_product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\app_code\\entiies\\entitybase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\app_code\\entiies\\entitybase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\app_code\\kiotvietapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\app_code\\kiotvietapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\app_code\\entiies\\pp_role.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\app_code\\entiies\\pp_role.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\app_code\\models\\kiotproduct.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\app_code\\models\\kiotproduct.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\app_code\\viewmodels\\vm_product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\app_code\\viewmodels\\vm_product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\app_code\\viewmodels\\pagelistmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\app_code\\viewmodels\\pagelistmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\_compt\\view_cart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\_compt\\view_cart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\_compt\\index01.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\_compt\\index01.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\_layouts\\_layout01.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\_layouts\\_layout01.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\_compt\\products.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\_compt\\products.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\app_code\\viewmodels\\vm_base.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\app_code\\viewmodels\\vm_base.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|d:\\kienvip\\laptrinh\\ltweb\\thuctap\\webmau_1\\source\\admin\\product\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6C6C8D71-C93B-4324-9209-E4042DB1523A}|D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source|solutionrelative:source\\admin\\product\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 15,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{74946827-37a0-11d2-a273-00c04f8ef4ff}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "PP_Role.cs",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\Entiies\\PP_Role.cs",
+              "RelativeDocumentMoniker": "source\\app_code\\Entiies\\PP_Role.cs",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\Entiies\\PP_Role.cs",
+              "RelativeToolTip": "source\\app_code\\Entiies\\PP_Role.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-12T10:23:35.884Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "EntityBase.cs",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\Entiies\\EntityBase.cs",
+              "RelativeDocumentMoniker": "source\\app_code\\Entiies\\EntityBase.cs",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\Entiies\\EntityBase.cs",
+              "RelativeToolTip": "source\\app_code\\Entiies\\EntityBase.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAMAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-12T09:26:34.164Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "KiotProduct.cs",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\Models\\KiotProduct.cs",
+              "RelativeDocumentMoniker": "source\\app_code\\Models\\KiotProduct.cs",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\Models\\KiotProduct.cs",
+              "RelativeToolTip": "source\\app_code\\Models\\KiotProduct.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-12T09:08:01.303Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PP_Product.cs",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\Entiies\\PP_Product.cs",
+              "RelativeDocumentMoniker": "source\\app_code\\Entiies\\PP_Product.cs",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\Entiies\\PP_Product.cs",
+              "RelativeToolTip": "source\\app_code\\Entiies\\PP_Product.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABAAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-12T09:04:02.671Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "view_cart.cshtml",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\_compt\\view_cart.cshtml",
+              "RelativeDocumentMoniker": "source\\_compt\\view_cart.cshtml",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\_compt\\view_cart.cshtml",
+              "RelativeToolTip": "source\\_compt\\view_cart.cshtml",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA8AAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-12T09:02:27.298Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "index01.cshtml",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\_compt\\index01.cshtml",
+              "RelativeDocumentMoniker": "source\\_compt\\index01.cshtml",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\_compt\\index01.cshtml",
+              "RelativeToolTip": "source\\_compt\\index01.cshtml",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-12T09:02:16.573Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "PageListModel.cs",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\ViewModels\\PageListModel.cs",
+              "RelativeDocumentMoniker": "source\\app_code\\ViewModels\\PageListModel.cs",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\ViewModels\\PageListModel.cs",
+              "RelativeToolTip": "source\\app_code\\ViewModels\\PageListModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-12T08:38:39.923Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "VM_Base.cs",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\ViewModels\\VM_Base.cs",
+              "RelativeDocumentMoniker": "source\\app_code\\ViewModels\\VM_Base.cs",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\ViewModels\\VM_Base.cs",
+              "RelativeToolTip": "source\\app_code\\ViewModels\\VM_Base.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-12T08:38:26.074Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "VM_Product.cs",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\ViewModels\\VM_Product.cs",
+              "RelativeDocumentMoniker": "source\\app_code\\ViewModels\\VM_Product.cs",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\ViewModels\\VM_Product.cs",
+              "RelativeToolTip": "source\\app_code\\ViewModels\\VM_Product.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAuwAYAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-12T08:35:57.057Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "_layout01.cshtml",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\_layouts\\_layout01.cshtml",
+              "RelativeDocumentMoniker": "source\\_layouts\\_layout01.cshtml",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\_layouts\\_layout01.cshtml",
+              "RelativeToolTip": "source\\_layouts\\_layout01.cshtml",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAAAFsAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-12T08:32:56.098Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "edit.cshtml",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\admin\\product\\edit.cshtml",
+              "RelativeDocumentMoniker": "source\\admin\\product\\edit.cshtml",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\admin\\product\\edit.cshtml",
+              "RelativeToolTip": "source\\admin\\product\\edit.cshtml",
+              "ViewState": "AgIAAFoAAAAAAAAAAAAAAFsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-12T08:14:34.154Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "create.cshtml",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\admin\\product\\create.cshtml",
+              "RelativeDocumentMoniker": "source\\admin\\product\\create.cshtml",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\admin\\product\\create.cshtml",
+              "RelativeToolTip": "source\\admin\\product\\create.cshtml",
+              "ViewState": "AgIAAJkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-12T08:14:33.087Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "index.cshtml",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\admin\\product\\index.cshtml",
+              "RelativeDocumentMoniker": "source\\admin\\product\\index.cshtml",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\admin\\product\\index.cshtml",
+              "RelativeToolTip": "source\\admin\\product\\index.cshtml",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAAAFgAAABnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-12T08:14:25.1Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "products.cshtml",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\_compt\\products.cshtml",
+              "RelativeDocumentMoniker": "source\\_compt\\products.cshtml",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\_compt\\products.cshtml",
+              "RelativeToolTip": "source\\_compt\\products.cshtml",
+              "ViewState": "AgIAANIBAAAAAAAAAAD4v50AAABwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-12T07:43:11.649Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "KiotVietAPI.cs",
+              "DocumentMoniker": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\KiotVietAPI.cs",
+              "RelativeDocumentMoniker": "source\\app_code\\KiotVietAPI.cs",
+              "ToolTip": "D:\\Kienvip\\LapTrinh\\LTWeb\\ThucTap\\WebMau_1\\source\\app_code\\KiotVietAPI.cs",
+              "RelativeToolTip": "source\\app_code\\KiotVietAPI.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAA/wC0AAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-12T07:34:38.018Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

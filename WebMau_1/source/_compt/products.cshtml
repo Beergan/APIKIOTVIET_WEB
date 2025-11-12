@@ -1,0 +1,566 @@
+﻿@inherits MyWebPage
+@using SLK.Common
+@functions {
+    [Component(
+        Type = ComptType.Page_Template,
+        ComptName = "en:Product list template|vi:Mẫu trang danh sách sản phẩm",
+        PathPostfix = "/{0}",
+        PageType = "list", NodeType = "product")]
+    public class ViewModel : PageListModel
+    {
+        public static ViewModel Default => new ViewModel()
+        {
+            Title = "Nest",
+        };
+
+    }/*end_viewmodel*/
+    private ViewModel _data;
+    private ViewModel Data => _data ?? (_data = ViewModel.Default);
+    private MyTranslator Text => new MyTranslator(Data?.Phrases);
+}
+
+@{
+    var client = new KiotAPIClient(
+        "https://public.kiotapi.com/",
+        "nestmart",
+        "F625634318E4F75291ED3441C030EEA5DC949C4D",
+        "eyJhbGciOiJSUzI1NiIsInR5cCI6ImF0K2p3dCJ9.eyJuYmYiOjE3NjI4NTAyOTksImV4cCI6MTc2MjkzNjY5OSwiaXNzIjoiaHR0cDovL2lkLmtpb3R2aWV0LnZuIiwiY2xpZW50X2lkIjoiM2RmNzUyMGUtNTA2MS00NGFhLWFkNzAtZGZlYzI2ZTg2OTkyIiwiY2xpZW50X1JldGFpbGVyQ29kZSI6Im5lc3RtYXJ0IiwiY2xpZW50X1JldGFpbGVySWQiOiI1MDA5Nzc5NjciLCJjbGllbnRfVXNlcklkIjoiMTAwMDA0NTAyMSIsImNsaWVudF9TZW5zaXRpdmVBcGkiOiJUcnVlIiwiY2xpZW50X0dyb3VwSWQiOiIyNCIsImNsaWVudF9TZWNyZXRLZXkiOiJaKzl4eFBiU0Vubm45TlRtL2Y3NDVGV3hCQW1ZNVpaNHp4Q0xvdm5IdWpRPSIsImlhdCI6MTc2Mjg1MDI5OSwic2NvcGUiOlsiUHVibGljQXBpLkFjY2VzcyJdfQ.ecBvavWD7AeSX6FaPk8CPbFb4lmVZjBKMCfuBwyI3usFzmkFG5NZxreO8BZPiF0Te5u0f_iMLEyEtmPpXZEth5C8q9uKNCQx3dTJIP7DbIvY9Cxlhy2ksWmBF-ZgTuEZ4w5ZC0iPYUDPLBBh1M1sXlh60RMDy7hlIlWDK9m3JzvC5yEW-_W8PyPCFdko0ywzjuRcWsN78TXrGrcmaZkXKTPfbDJMPYfrYFMQAg5AfbH3nK7fi6jv-Z0vXSVkbOZHWsximwmMJHzJxUDd3I87gRUFvofkT7u57dQ1thz8XDauWV0HxMeclwe13WfcbFC5pShNQRntCKUa7N9ldCvIkg"
+    );
+
+    var response = client.GetProducts(12, "fullName");
+
+    _data = LoadData<ViewModel>(key: $"{LangId}-{FileName}#{NodeSlug}", setup: (model) =>
+    {
+        model = model ?? new ViewModel();
+
+        var page = Db.GetOne<PP_Page>(PageId);
+        if (page == null) return null;
+
+        model.Title = page.Title;
+        model.MetaDescription = page.MetaDescription;
+        model.MetaKeywords = page.MetaKeywords;
+
+        return model;
+    });
+
+    Layout = $"~/_layouts/_layout{Root.LayoutId}.cshtml";
+    Page.Title = Data.Title;
+    Page.Description = Data.MetaDescription;
+    Page.Keywords = Data.MetaKeywords;
+    Page.IndexPageRunning = true;
+}
+
+<main>
+    <div class="container-fluid">
+        <div class="gridBanner">
+            <div class="position-relative">
+                <img class="gridBannerImg" src="~/upload/banner-10.png" alt="banner" title="banner"
+                     height="250px" width="100%">
+                <div class="gridBannerLeft">
+                    <h1>Snack</h1>
+                    <div class="BannerBreadcrumb my-4 d-flex justify-content-start align-items-center">
+                        <i class="fa-regular fa-house"></i>
+                        <a href="" class="mb-0 active1">&nbsp;Home</a>
+                        <span class="mx-3"> > </span>
+                        <p class="mb-0">
+                            Shop</a>
+                            <span class="mx-3"> > </span>
+                        <p class="mb-0">Snack</p><br>
+                    </div>
+                </div>
+                <div class="gridBannerRight d-flex justify-content-between">
+                    <div class="gridBannerCategory">
+                        <span>X &nbsp;</span>
+                        <a href="">Cabbage</a>
+                    </div>
+                    <div class="gridBannerCategory">
+                        <span>X &nbsp;</span>
+                        <a href="" class="active2">Cabbage</a>
+                    </div>
+                    <div class="gridBannerCategory">
+                        <span>X &nbsp;</span>
+                        <a href="">Cabbage</a>
+                    </div>
+                    <div class="gridBannerCategory">
+                        <span>X &nbsp;</span>
+                        <a href="">Cabbage</a>
+                    </div>
+                    <div class="gridBannerCategory">
+                        <span>X &nbsp;</span>
+                        <a href="">Cabbage</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="gridProducts row">
+            <div class="col-9">
+                <div class="popularProductList wow fadeInUp">
+                    <div class="mt-5 wow row fadeInUp">
+                        @if (response == null)
+                        {
+                            <div class="w-100 p-3 mb-2 bg-warning-subtle text-warning-emphasis rounded">
+                                <h3>Hiện danh mục này đã hết hàng. Vui lòng quay lại vào ngày mai!</h3>
+                            </div>
+                        }
+                        @foreach (var product in response.Data.Select((x, y) => new { x, y }))
+                        {
+
+                            <div class="gridProduct popularProduct-item col-6 col-md-4 col-lg-3 wow fadeInUp position-relative"
+                                 data-wow-delay="0.@(product.y + 1)s">
+                                <div>
+                                    <a href=""><img src="@product.x.Images[0]" alt="product" width="100%"></a>
+                                    <div class="productActions">
+                                        <div>
+                                            <div class="productActionIcon">
+                                                <a href="">
+                                                    <i class="fa-regular fa-heart"></i>
+                                                </a>
+                                                <div class="actionDescription">
+                                                    <span>Add to wishlist</span>
+                                                </div>
+                                            </div>
+                                            <div class="productActionIcon">
+                                                <a href="">
+                                                    <i class="fa-solid fa-shuffle"></i>
+                                                </a>
+                                                <div class="actionDescription">
+                                                    <span>Compare</span>
+                                                </div>
+                                            </div>
+                                            <div class="productActionIcon">
+                                                <a href="">
+                                                    <i class="fa-regular fa-eye"></i>
+                                                </a>
+                                                <div class="actionDescription">
+                                                    <span>Quickview</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="gridProductState">Hot</span>
+                                <span class="snack">@product.x.CategoryName</span>
+                                <a href="">
+                                    <h6 class="productName">@product.x.Name</h6>
+                                </a>
+                                <div class="rating">
+                                    <div class="productRating">
+                                        <div class="ratingStars">
+                                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                        </div>
+                                    </div>
+                                    <span>(4.0)</span>
+                                </div>
+                                <p>By <span class="gridProductProvider">Nestfood</span></p>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h5 class="d-inline gridProductPrice">$@product.x.BasePrice.ToString("N2")</h5>
+                                        <span class="oldPrice">$@product.x.BasePrice.ToString("N2")</span>
+                                    </div>
+                                    <div class="d-inline">
+                                        <button type="button" class="btn btnAddToCart detail-btnAddToCart" productId="@product.x.Id">
+                                            <i class="fa-solid fa-cart-shopping"></i> Add
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <ul class="pagination">
+                    <li class="mx-2 pageLink">
+                        <a href="">
+                            <
+                        </a>
+                    </li>
+                    <li class="mx-2 pageLink"><a href="">1</a></li>
+                    <li class="mx-2 pageLink"><a href="">2</a></li>
+                    <li class="mx-2 pageLink"><a href="">...</a></li>
+                    <li class="mx-2 pageLink"><a href="">5</a></li>
+                    <li class="mx-2 pageLink"><a href="">6</a></li>
+                    <li class="mx-2 pageLink"><a href="">></a></li>
+                </ul>
+                <div class="dayDeal my-5">
+                    <div class="featuredMenu d-flex flex-row d-flex justify-content-between">
+                        <h3 class="me-3 fw-bold">Deals Of The Day</h3>
+                        <ul class="list-group list-group-horizontal featuredList me-3">
+                            <li class="list-group-item"><a href="">All Deals ></a></li>
+                        </ul>
+                    </div>
+                    <div class="dealList row">
+                        <div class="col-3 dealItem position-relative">
+                            <img src="../assets/imgs/banner/banner-5.png" alt="" width="100%">
+                            <div class="dealProduct">
+                                <div class="countdown row">
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber days">199</span>
+                                        <p>Days</p>
+                                    </div>
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber hours">19</span>
+                                        <p>Hours</p>
+                                    </div>
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber minutes">29</span>
+                                        <p>Mins</p>
+                                    </div>
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber seconds">39</span>
+                                        <p>Sec</p>
+                                    </div>
+                                </div>
+                                <div class="dealProductContent">
+                                    <a href="">
+                                        <h6 class="productName">
+                                            Seeds of Change Organic Quinoa, Brown, & Red Rice
+                                        </h6>
+                                    </a>
+                                    <div class="rating">
+                                        <div class="productRating">
+                                            <div class="ratingStars">
+                                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <span>(4.0)</span>
+                                    </div>
+                                    <p>By <span class="shopName">Nestfood</span></p>
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h5 class="d-inline currentPrice">$54.85</h5>
+                                            <span class="oldPrice">$55.8</span>
+                                        </div>
+                                        <div class="d-inline">
+                                            <button type="button" class="btn btnAddToCart">
+                                                <i class="fa-solid fa-cart-shopping"></i> Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 dealItem position-relative">
+                            <img src="../assets/imgs/banner/banner-5.png" alt="" width="100%">
+                            <div class="dealProduct">
+                                <div class="countdown row">
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber days">199</span>
+                                        <p>Days</p>
+                                    </div>
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber hours">19</span>
+                                        <p>Hours</p>
+                                    </div>
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber minutes">29</span>
+                                        <p>Mins</p>
+                                    </div>
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber seconds">39</span>
+                                        <p>Sec</p>
+                                    </div>
+                                </div>
+                                <div class="dealProductContent">
+                                    <a href="">
+                                        <h6 class="productName">
+                                            Seeds of Change Organic Quinoa, Brown, & Red Rice
+                                        </h6>
+                                    </a>
+                                    <div class="rating">
+                                        <div class="productRating">
+                                            <div class="ratingStars">
+                                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <span>(4.0)</span>
+                                    </div>
+                                    <p>By <span class="shopName">Nestfood</span></p>
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h5 class="d-inline currentPrice">$54.85</h5>
+                                            <span class="oldPrice">$55.8</span>
+                                        </div>
+                                        <div class="d-inline">
+                                            <button type="button" class="btn btnAddToCart">
+                                                <i class="fa-solid fa-cart-shopping"></i> Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 dealItem position-relative">
+                            <img src="../assets/imgs/banner/banner-5.png" alt="" width="100%">
+                            <div class="dealProduct">
+                                <div class="countdown row">
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber days">199</span>
+                                        <p>Days</p>
+                                    </div>
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber hours">19</span>
+                                        <p>Hours</p>
+                                    </div>
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber minutes">29</span>
+                                        <p>Mins</p>
+                                    </div>
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber seconds">39</span>
+                                        <p>Sec</p>
+                                    </div>
+                                </div>
+                                <div class="dealProductContent">
+                                    <a href="">
+                                        <h6 class="productName">
+                                            Seeds of Change Organic Quinoa, Brown, & Red Rice
+                                        </h6>
+                                    </a>
+                                    <div class="rating">
+                                        <div class="productRating">
+                                            <div class="ratingStars">
+                                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <span>(4.0)</span>
+                                    </div>
+                                    <p>By <span class="shopName">Nestfood</span></p>
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h5 class="d-inline currentPrice">$54.85</h5>
+                                            <span class="oldPrice">$55.8</span>
+                                        </div>
+                                        <div class="d-inline">
+                                            <button type="button" class="btn btnAddToCart">
+                                                <i class="fa-solid fa-cart-shopping"></i> Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 dealItem position-relative">
+                            <img src="../assets/imgs/banner/banner-5.png" alt="" width="100%">
+                            <div class="dealProduct">
+                                <div class="countdown row">
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber days">199</span>
+                                        <p>Days</p>
+                                    </div>
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber hours">19</span>
+                                        <p>Hours</p>
+                                    </div>
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber minutes">29</span>
+                                        <p>Mins</p>
+                                    </div>
+                                    <div class="countdownItem gridCountDown col-3">
+                                        <span class="countdownNumber seconds">39</span>
+                                        <p>Sec</p>
+                                    </div>
+                                </div>
+                                <div class="dealProductContent">
+                                    <a href="">
+                                        <h6 class="productName">
+                                            Seeds of Change Organic Quinoa, Brown, & Red Rice
+                                        </h6>
+                                    </a>
+                                    <div class="rating">
+                                        <div class="productRating">
+                                            <div class="ratingStars">
+                                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <span>(4.0)</span>
+                                    </div>
+                                    <p>By <span class="shopName">Nestfood</span></p>
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h5 class="d-inline currentPrice">$54.85</h5>
+                                            <span class="oldPrice">$55.8</span>
+                                        </div>
+                                        <div class="d-inline">
+                                            <button type="button" class="btn btnAddToCart">
+                                                <i class="fa-solid fa-cart-shopping"></i> Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-3 mt-4">
+                <div class="stickyRightMenu">
+                    <div class="border p-4 rightMenu-category">
+                        <div class="position-relative">
+                            <h4 class="mt-0 gridRightCategory">Category</h4>
+                            <hr class="m-0">
+                        </div>
+                        @*@foreach (var cat in Data.categories)
+                        {
+                            <a href="/@cat.Value.First().Value.First().Key" class="rm-category-item d-flex justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <img src="../assets/imgs/theme/icons/category-1.svg" alt="category" width="30px">
+                                    <p>@cat.Value.First().Key</p>
+                                </div>
+                                <div>
+                                    <span>@cat.Value.First().Value.First().Value</span>
+                                </div>
+                            </a>
+                        }*@
+                    </div>
+                </div>
+
+                <div class="rightMenu-fillPrice border p-4 my-4">
+                    <div class="position-relative">
+                        <h4 class="mt-0">Fill by price</h4>
+                        <hr class="m-0">
+                    </div>
+                    <form action="">
+                        <div class="fillRange mt-4">
+                            <div class="row position-relative">
+                                <div class="col pe-0">
+                                    <input type="range" class="form-range range4" min="0" max="1000" value="0"
+                                           id="range4">
+                                    From:&nbsp;<output for="range4" class="rangeValue" id="rangeValue"
+                                                       aria-hidden="true"></output>
+                                </div>
+                                <div class="col ps-0">
+                                    <input type="range" class="form-range range4" min="1000" max="2000"
+                                           value="2000" id="range4">
+                                    To:&nbsp;<output for="range4" class="rangeValue" id="rangeValue"
+                                                     aria-hidden="true"></output>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="my-3 rightMenuChecker">
+                            <h6>Color</h6>
+                            <div class="form-check colorChecker">
+                                <input class="position-relative colorCheckbox form-check-input" type="checkbox"
+                                       value="" id="checkDefault">
+                                <label class="form-check-label" for="checkDefault">
+                                    Red (56)
+                                </label>
+                            </div>
+                            <div class="form-check colorChecker my-2">
+                                <input class="position-relative colorCheckbox form-check-input" type="checkbox"
+                                       value="" id="checkDefault1">
+                                <label class="form-check-label" for="checkDefault1">
+                                    Green (78)
+                                </label>
+                            </div>
+                            <div class="form-check colorChecker">
+                                <input class="position-relative colorCheckbox form-check-input" type="checkbox"
+                                       value="" id="checkDefault2">
+                                <label class="form-check-label" for="checkDefault2">
+                                    Blue (54)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="my-3 rightMenuChecker">
+                            <h6>Item Condition</h6>
+                            <div class="form-check colorChecker">
+                                <input class="position-relative colorCheckbox form-check-input" type="checkbox"
+                                       value="" id="checkDefault3">
+                                <label class="form-check-label" for="checkDefault3">
+                                    New (1506)
+                                </label>
+                            </div>
+                            <div class="form-check colorChecker my-2">
+                                <input class="position-relative colorCheckbox form-check-input" type="checkbox"
+                                       value="" id="checkDefault4">
+                                <label class="form-check-label" for="checkDefault4">
+                                    Refurbished (27)
+                                </label>
+                            </div>
+                            <div class="form-check colorChecker">
+                                <input class="position-relative colorCheckbox form-check-input" type="checkbox"
+                                       value="" id="checkDefault5">
+                                <label class="form-check-label" for="checkDefault5">
+                                    Used (45)
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-success btnFilter mt-3 ms-2" type="button">
+                                <span><i class="fa-solid fa-filter"></i> Filter</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="newProducts border p-4">
+                    <div class="position-relative">
+                        <h4 class="mt-0 gridPriceFilter newProductTitle">Fill by price</h4>
+                        <hr class="m-0">
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-4 p-0">
+                            <a href="" title="new product">
+                                <img src="../assets/imgs/shop/thumbnail-3.jpg"
+                                     width="100%" alt="new product">
+                            </a>
+                        </div>
+                        <div class="col-8">
+                            <h5 class="my-1 newProductName"><a href="">Chen Cardigan</a></h5>
+                            <div class="my-2">
+                                <span class="newProductPrice">$99.50</span>
+                            </div>
+                            <div class="newProductRating">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 p-0">
+                            <a href="" title="new product">
+                                <img src="../assets/imgs/shop/thumbnail-3.jpg"
+                                     width="100%" alt="new product">
+                            </a>
+                        </div>
+                        <div class="col-8">
+                            <h5 class="my-1 newProductName"><a href="">Chen Cardigan</a></h5>
+                            <div class="my-2">
+                                <span class="newProductPrice">$99.50</span>
+                            </div>
+                            <div class="newProductRating">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 p-0">
+                            <a href="" title="new product">
+                                <img src="../assets/imgs/shop/thumbnail-3.jpg"
+                                     width="100%" alt="new product">
+                            </a>
+                        </div>
+                        <div class="col-8">
+                            <h5 class="my-1 newProductName"><a href="">Chen Cardigan</a></h5>
+                            <div class="my-2">
+                                <span class="newProductPrice">$99.50</span>
+                            </div>
+                            <div class="newProductRating">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+

@@ -1,0 +1,204 @@
+﻿@inherits MyWebPage
+@using SLK.Common
+@functions {
+    [Component
+        (Type = ComptType.Page_Element,
+        ComptName = "en:Page footer component|vi:Thành phần chân trang")]
+    public class ViewModel
+    {
+        public IDictionary<string, string> Phrases { get; set; } = new Dictionary<string, string>();
+
+        public static ViewModel Default => new ViewModel { };
+    }/*end_viewmodel*/
+    private ViewModel _data;
+    private ViewModel Data => _data ?? (_data = ViewModel.Default);
+    private MyTranslator Text => new MyTranslator(Data?.Phrases);
+}
+@{
+    _data = LoadData<ViewModel>(key: $"{LangId}-{FileName}#{NodeSlug}", setup: (model) =>
+    {
+        model = model ?? new ViewModel();
+
+        var page = Db.GetOne<PP_Page>(PageId);
+        if (page == null) return null;
+
+        return model;
+    });
+    Layout = IsDirectCall ? "~/_layouts/_empty.cshtml" : null;
+}
+
+
+<footer class="mt-5 container-fluid">
+
+    <div class="footerBanner my-5 position-relative">
+        <img src="../assets/imgs/banner/banner-12.png" class="d-block w-100" height="400px" alt="...">
+        <img class="vegetableMan" src="../assets/imgs/banner/banner-9.png" alt="">
+        <div class="footerBanner-content">
+            <h1>Stay home & get your daily <br>needs from our shop</h1>
+            <p class="my-4">Start You'r Daily Shopping with <span class="shopName">Nest Mart</span></p>
+            <div class="input-group mb-3 emailInput d-flex justify-content-between align-items-center">
+                <i class="fa-regular fa-paper-plane"></i>
+                <input class="emailTextbox" type="text" class="form-control" placeholder="Your email address"
+                       aria-label="Your email address" aria-describedby="button-addon2">
+                <button class="btn btn-outline-secondary btnSendEmail" type="button"
+                        id="button-addon2">
+                    Subscribe
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="services d-flex justify-content-around">
+        <div class="servicesItem d-flex">
+            <div class="servicesItem-left">
+                <img src="../assets/imgs/theme/icons/icon-1.svg" width="90%" alt="">
+            </div>
+            <div class="servicesItem-right">
+                <h5>Best prices & offers</h5>
+                <span>Orders $50 or more</span>
+            </div>
+        </div>
+        <div class="servicesItem d-flex">
+            <div class="servicesItem-left">
+                <img src="../assets/imgs/theme/icons/icon-2.svg" width="90%" alt="">
+            </div>
+            <div class="servicesItem-right">
+                <h5>Easy returns</h5>
+                <span>Within 30 days</span>
+            </div>
+        </div>
+        <div class="servicesItem d-flex">
+            <div class="servicesItem-left">
+                <img src="../assets/imgs/theme/icons/icon-3.svg" width="90%" alt="">
+            </div>
+            <div class="servicesItem-right">
+                <h5>Free delivery</h5>
+                <span>24/7 amazing services</span>
+            </div>
+        </div>
+        <div class="servicesItem d-flex">
+            <div class="servicesItem-left">
+                <img src="../assets/imgs/theme/icons/icon-4.svg" width="90%" alt="">
+            </div>
+            <div class="servicesItem-right">
+                <h5>Great daily deal</h5>
+                <span>When you sign up</span>
+            </div>
+        </div>
+        <div class="servicesItem d-flex">
+            <div class="servicesItem-left">
+                <img src="../assets/imgs/theme/icons/icon-5.svg" width="90%" alt="">
+            </div>
+            <div class="servicesItem-right">
+                <h5>Wide assortment</h5>
+                <span>Mega Discounts</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-around">
+        <div class="footerTop footer1">
+            <img src="../assets/imgs/theme/logo.svg" alt="">
+            <p class="my-3">Awesome grocery store website template</p>
+            <p><strong>Address:</strong>5171 W Campbell Ave undefined Kent, Utah 53127 United States</p>
+            <p><strong>Call Us:</strong>(+91) - 540-025-124553</p>
+            <p><strong>Email:</strong>sale@Nest.com</p>
+            <p><strong>Hours:</strong>10:00 - 18:00, Mon - Sat</p>
+            <h3>Install App</h3>
+            <p>From App Store or Google Play</p>
+            <div class="footer1Images d-flex justify-content-between w-100">
+                <a href=""><img src="../assets/imgs/theme/app-store.jpg" alt=""></a>&nbsp;
+                <a href=""><img src="../assets/imgs/theme/google-play.jpg" alt=""></a>
+            </div>
+            <p>Secured Payment Gateways</p>
+            <img src="../assets/imgs/theme/payment-method.png" alt="">
+        </div>
+        <div class="footerTop footer2">
+            <p>Company</p>
+            <a href="">About Us</a>
+            <a href="">Delivery Information</a>
+            <a href="">Privacy Policy</a>
+            <a href="">Terms & Conditions</a>
+            <a href="">Contact Us</a>
+            <a href="">Support Center</a>
+            <a href="">Careers</a>
+        </div>
+        <div class="footerTop footer3">
+            <h4>Account</h4>
+            <a href="">About Us</a>
+            <a href="">Delivery Information</a>
+            <a href="">Privacy Policy</a>
+            <a href="">Terms & Conditions</a>
+            <a href="">Contact Us</a>
+            <a href="">Support Center</a>
+            <a href="">Careers</a>
+        </div>
+        <div class="footerTop footer4">
+            <h4>Corporate</h4>
+            <a href="">About Us</a>
+            <a href="">Delivery Information</a>
+            <a href="">Privacy Policy</a>
+            <a href="">Terms & Conditions</a>
+            <a href="">Contact Us</a>
+            <a href="">Support Center</a>
+            <a href="">Careers</a>
+        </div>
+        <div class="footerTop footer5">
+            <h4>Popular</h4>
+            <a href="">About Us</a>
+            <a href="">Delivery Information</a>
+            <a href="">Privacy Policy</a>
+            <a href="">Terms & Conditions</a>
+            <a href="">Contact Us</a>
+            <a href="">Support Center</a>
+            <a href="">Careers</a>
+        </div>
+    </div>
+    <hr>
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <p>© 2024, <strong class="shopName">Nest</strong> - HTML Ecommerce Template <br>All rights reserved</p>
+        </div>
+        <div class="d-flex p-3">
+            <div class="nav3Contact">
+                <div class="footerBottomIcon me-3">
+                    <i class="fa-solid fa-phone-volume"></i>
+                </div>
+                <div class="footerBottomContact">
+                    <div>
+                        <h4>1900 - 888</h4>
+                    </div>
+                    <div>
+                        Working 8:00 - 22:00</p>
+                    </div>
+                </div>
+            </div>
+            <div class="nav3Contact">
+                <div class="footerBottomIcon me-3">
+                    <i class="fa-solid fa-phone-volume"></i>
+                </div>
+                <div class="footerBottomContact">
+                    <div>
+                        <h4>1900 - 888</h4>
+                    </div>
+                    <div>
+                        24/7 support center</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footerBottomRight">
+            <div class="d-flex footerContactIcons align-items-center">
+                <h6>Follow Us</h6>&nbsp;&nbsp;
+                <a href=""><i class="fa-brands fa-facebook"></i></a>
+                <a href=""><i class="fa-brands fa-twitter"></i></a>
+                <a href=""><i class="fa-brands fa-instagram"></i></a>
+                <a href=""><i class="fa-brands fa-pinterest"></i></a>
+                <a href=""><i class="fa-brands fa-youtube"></i></a>
+            </div>
+            <div>
+                <p>Up to 15% discount on your first subscribe</p>
+            </div>
+        </div>
+    </div>
+</footer>

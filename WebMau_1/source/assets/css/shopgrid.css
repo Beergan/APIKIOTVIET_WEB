@@ -1,0 +1,106 @@
+/* grid products */
+.gridProducts {
+    margin-bottom: 160px;
+}
+
+.gridProduct img {
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.gridBannerImg {
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+.gridBannerLeft {
+    position: absolute;
+    left: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: bold !important;
+    color: rgb(126, 126, 126);
+}
+
+.gridBannerRight {
+    width: 45%;
+    position: absolute;
+    top: 50%;
+    right: 5%;
+    transform: translateY(-50%);
+}
+
+.gridBannerLeft h1 {
+    font-weight: bold;
+    color: #253D4E;
+    font-size: 50px;
+}
+
+.active1 {
+    color: #3BB77E;
+}
+
+.gridBannerCategory {
+    background-color: white;
+    width: 120px;
+    justify-content: center;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    border-radius: 30px;
+    box-shadow: 5px 5px 6px -2px rgba(0, 0, 0, 0.42);
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+    .gridBannerCategory a {
+        color: #3BB77E;
+    }
+
+    .gridBannerCategory span {
+        color: #B6B6B6;
+    }
+
+    .gridBannerCategory:hover {
+        transform: translateY(-10%);
+    }
+
+        .gridBannerCategory:hover a,
+        .gridBannerCategory:hover .active2 {
+            color: rgb(199, 199, 0)!important;
+        }
+
+.active2 {
+    color: black !important;
+}
+
+.gridProduct {
+    width: 23%;
+}
+
+.pageLink a {
+    background-color: #f2f3f4;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    transition: all 0.3s;
+    color: #7e7e7e;
+    font-weight: bold;
+}
+
+.pageLink:hover a {
+    background-color: #3BB77E;
+    color: white;
+}
+
+.gridCountDown {
+    width: 20%;
+    padding: 5px;
+}
+
+    .gridCountDown p {
+        font-size: 13px;
+    }

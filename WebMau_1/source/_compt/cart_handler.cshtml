@@ -1,0 +1,80 @@
+﻿@inherits MyWebPage
+
+@{
+    Layout = null;
+    Response.ContentType = "application/json";
+    var writer = new System.IO.StringWriter();
+
+
+    var miniCartPartial = MyWebPage.CreateInstanceFromVirtualPath("~/_compt/minicart.cshtml");
+    miniCartPartial.ExecutePageHierarchy(WebPageContext.Current, writer);
+
+    var action = Request["action"] ?? "";
+
+    var cart = new ShoppingCart(Context);
+
+    if (IsPost)
+    {
+        if (action == "add")
+        {
+            int productId = Convert.ToInt32(Request["productId"]);
+            int quantity = Convert.ToInt32(Request["quantity"]);
+
+            var product = Db.Table<PP_Product>()
+                .Where(p => p.Id == productId).FirstOrDefault();
+
+            if (product == null)
+            {
+                Response.Write(Json.Encode(new
+                {
+                    success = false,
+                    message = "Product not found!"
+                }));
+                return;
+            }
+
+            cart.AddToCart(product, quantity);
+
+            var totalQuantity = cart.GetQuantity();
+
+            Response.Write(Json.Encode(new
+            {
+                success = true,
+                message = "Added 1 product to cart!",
+                cartQty = totalQuantity
+            }));
+        }
+        
+        if (action == "remove")
+        {
+            var productRemove = cart.GetCartLines()
+                .Where(p => p.Product.Id == Convert.ToInt32(Request["productId"]))
+                .Select(s => s.Product)
+                .FirstOrDefault();
+
+            cart.RemoveFromCart(productRemove);
+
+            Response.Write(Json.Encode(new
+            {
+                success = true,
+                message = "Removed 1 product in cart!!!"
+            }));
+        }
+    }
+    else
+    {
+        if (action == "getCart")
+        {
+            var qty = cart.GetQuantity();
+            var totalMoney = cart.GetSubTotal();
+
+            Response.Write(Json.Encode(new
+            {
+                success = true,
+                totalQty = qty,
+                html = writer.ToString(),
+                totalMoney = totalMoney == 0 ? 0.ToString() : totalMoney.ToString("#.#0")
+            }));
+        }
+    }
+}

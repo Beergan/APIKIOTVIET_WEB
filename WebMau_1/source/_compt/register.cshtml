@@ -1,0 +1,288 @@
+﻿@inherits MyWebPage
+@using SLK.Common
+@using System
+@using System.Web.Helpers
+@functions {
+    [Component(
+        Type = ComptType.Page_Template,
+        ComptName = "en:Authentication page template|vi:Mẫu trang xác thực người dùng",
+        PathPostfix = "/{0}",
+        PageType = "single", NodeType = "authentication")]
+    public class ViewModel : PageListModel
+    {
+        public static ViewModel Default => new ViewModel()
+        {
+            Title = "Authenticate",
+        };
+
+    }/*end_viewmodel*/
+    private ViewModel _data;
+    private ViewModel Data => _data ?? (_data = ViewModel.Default);
+    private MyTranslator Text => new MyTranslator(Data?.Phrases);
+
+}
+@{
+    if (Request.Cookies.Get("jwt") != null)
+    {
+        Response.Redirect("/");
+        Response.End();
+    }
+
+    var action = Request["action"] ?? "";
+    if (action != "")
+    {
+        Response.ContentType = "application/json";
+    }
+
+    if (IsPost)
+    {
+        try
+        {
+            var username = Request["Username"];
+            var email = Request["Email"];
+            var password = Request["Password"];
+            var passwordConfirm = Request["PasswordConfirm"];
+
+            if (action == "register")
+            {
+                var exist = Db.Table<PP_Customer>()
+                    .Where(c => c.UserId == username)
+                    .Any();
+
+                if (!exist)
+                {
+                    var hashed = Crypto.SHA256(password);
+
+                    var customer = new PP_Customer()
+                    {
+                        UserId = username,
+                        Email = email,
+                        Password = hashed
+                    };
+                    Db.Insert<PP_Customer>(customer);
+
+                    string jwt = new JwtHandler().GenJWT(customer.Email, customer.Id, customer.UserId);
+
+                    Response.Write(Json.Encode(new
+                    {
+                        success = true,
+                        message = "Register success!!!",
+                    }));
+
+                    Response.Cookies.Add(new HttpCookie("jwt", jwt));
+                    Response.Cookies["jwt"].HttpOnly = true;
+                    Response.Cookies["jwt"].Secure = true;
+                    return;
+                }
+                else
+                {
+                    Response.Write(Json.Encode(new
+                    {
+                        success = false,
+                        message = "Username exist!!!"
+                    }));
+                    return;
+                }
+            }
+            if (action == "login")
+            {
+                var hashed = Crypto.SHA256(password);
+
+                var user = Db.Table<PP_Customer>()
+                    .Where(c => c.UserId == username && c.Password == hashed)
+                    .FirstOrDefault();
+
+                if (user == null)
+                {
+                    Response.Write(Json.Encode(new
+                    {
+                        success = false,
+                        message = "User doesn't exist!"
+                    }));
+                    return;
+                }
+
+                else
+                {
+                    string jwt = new JwtHandler().GenJWT(user.Email, user.Id, username);
+                    Response.Write(Json.Encode(new
+                    {
+                        success = true,
+                        message = "Login success"
+                    }));
+
+                    Response.Cookies.Add(new HttpCookie("jwt", jwt));
+                    Response.Cookies["jwt"].HttpOnly = true;
+                    Response.Cookies["jwt"].Secure = true;
+                    return;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Response.Write(Json.Encode(new
+            {
+                success = false,
+                message = "server respond error" + ex.Message
+            }));
+            return;
+        }
+    }
+
+    _data = LoadData<ViewModel>
+    (key: $"{LangId}-{FileName}#{NodeSlug}", setup: (model) =>
+    {
+        model = model ?? new ViewModel();
+
+        var page = Db.GetOne<PP_Page>
+            (PageId);
+        if (page == null) return null;
+
+        model.Title = page.Title;
+        model.MetaDescription = page.MetaDescription;
+        model.MetaKeywords = page.MetaKeywords;
+        return model;
+    });
+
+    Layout = $"~/_layouts/_layout{Root.LayoutId}.cshtml";
+    Page.Title = Data.Title;
+    Page.Description = Data.MetaDescription;
+    Page.Keywords = Data.MetaKeywords;
+    Page.IndexPageRunning = true;
+}
+
+<main>
+    <div class="authenForm">
+        <div class="authenContainer" id="authenContainer">
+            <div class="form-container sign-up-container">
+                <form class="authenForm" id="registerForm">
+                    @AntiForgery.GetHtml()
+                    <h1 class="authenH1">Create Account</h1>
+                    <div class="social-container">
+                        <a href="#" class="social authenA"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social authenA"><i class="fab fa-google-plus-g"></i></a>
+                        <a href="#" class="social authenA"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <span class="authenSpan">or use your email for registration</span>
+                    <input class="authenInput register" type="text" placeholder="Username" name="Username" autocomplete="username" />
+                    <input class="authenInput register" type="email" placeholder="Email" name="Email" autocomplete="email" />
+                    <input class="authenInput register" type="password" placeholder="Password" name="Password" autocomplete="new-password" />
+                    <input class="authenInput register" type="password" placeholder="Password Confirm" name="PasswordConfirm" autocomplete="new-password" />
+                    <div class="validation">
+                        <span class="errorNoti text-danger"></span>
+                    </div>
+                    <button class="authenBtn">Sign Up</button>
+                </form>
+            </div>
+            <div class="form-container sign-in-container">
+                <form class="authenForm" id="loginForm">
+                    <h1 class="authenH1">Sign in</h1>
+                    <div class="social-container">
+                        <a href="#" class="social authenA"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social authenA"><i class="fab fa-google-plus-g"></i></a>
+                        <a href="#" class="social authenA"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <span class="authenSpan">or use your account</span>
+                    <input class="authenInput" type="text" placeholder="Username" name="Username" autocomplete="current-username" />
+                    <input class="authenInput" type="password" placeholder="Password" name="Password" autocomplete="current-password" />
+                    <a href="#" class="authenA">Forgot your password?</a>
+                    <div class="validation">
+                        <span class="errorNoti text-danger"></span>
+                    </div>
+                    <button class="authenBtn">Sign In</button>
+                </form>
+            </div>
+            <div class="overlay-container">
+                <div class="overlay">
+                    <div class="overlay-panel overlay-left">
+                        <h1 class="authenH1">Welcome Back!</h1>
+                        <p class="authenP">To keep connected with us please login with your personal info</p>
+                        <button class="ghost authenBtn" id="signIn">Sign In</button>
+                    </div>
+                    <div class="overlay-panel overlay-right">
+                        <h1 class="authenH1">Hello, Friend!</h1>
+                        <p class="authenP">Enter your personal details and start journey with us</p>
+                        <button class="ghost authenBtn" id="signUp">Sign Up</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section scripts{
+    <script>
+        //show sweet alert
+        function showAlert(title, text, icon) {
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: icon
+            });
+        }
+
+        //xu ly dang ky
+        $('#registerForm').on('submit', function (e) {
+            e.preventDefault();
+
+            let isValid = true;
+            $('input.register').each(function () {
+                var name = $(this).attr('name');
+                var val = $(this).val();
+
+                if (!val.trim()) {
+                    $('.errorNoti').text(`Please enter your ${name}`);
+                    isValid = false;
+                    return false;
+                }
+            })
+            if (!isValid) return;
+
+            var userData = $(this).serialize();
+            $.ajax({
+                url: '/@NodeSlug',
+                type: 'POST',
+                data: userData + '&action=register',
+                success: function (res) {
+                    if (res.success) {
+                        showAlert("success", res.message, "success")
+                        window.location.href = "/user-profile";
+                    }
+                    else {
+                        showAlert("error", res.message, "error");
+                    }
+                },
+                error: function (er) {
+                    console.log('error', er);
+                }
+            })
+        })
+
+        //xu ly dang nhap
+        $('#loginForm').on('submit', function (e) {
+            e.preventDefault();
+            var userData = $(this).serialize();
+
+            $.ajax({
+                url: '/@NodeSlug',
+                type: 'POST',
+                data: userData + '&action=login',
+                success: function (res) {
+                    if (res.success) {
+                        showAlert("success", res.message, "success");
+                        setTimeout(() => {
+                            window.location.href = '/user-profile';
+                        }, 1000)
+                    }
+                    else {
+                        showAlert("error", res.message, "error");
+                    }
+                },
+                error: function (er) {
+                    console.log('error', er);
+                }
+            })
+        });
+
+    </script>
+}

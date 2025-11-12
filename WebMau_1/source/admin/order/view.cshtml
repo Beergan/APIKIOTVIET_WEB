@@ -1,0 +1,34 @@
+﻿@inherits MyAdminPage
+@{
+    CheckAuthen()();
+    var field = new FieldExtractor<PP_Order>();
+    var query = Request.Url.Query;
+
+    string orderCode = Request.QueryString[nameof(orderCode)] ?? Request.Form[nameof(orderCode)];
+
+    Layout = null;
+}
+<table class="table">
+    <tr>
+        <td>Mã đơn hàng/Tình trạng</td>
+    </tr>
+    <tr>
+        <td>Tên/Số điện thoại</td>
+    </tr>
+    <tr>
+        <td>Ghi chú</td>
+    </tr>
+    <tr>
+        <td>Phí ship/Tổng cộng</td>
+    </tr>
+</table>
+<table class="table">
+    <tr>
+        <th>Sản phẩm</th>
+        <td align="right">Giá</td>
+        <td align="right">Số lượng</td>
+        <td align="right">Tiền hàng</td>
+    </tr>
+
+
+</table>

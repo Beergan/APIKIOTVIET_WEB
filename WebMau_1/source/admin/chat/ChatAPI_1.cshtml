@@ -1,0 +1,124 @@
+﻿@inherits MyWebPage
+@{
+    Layout = null;
+}
+
+@{
+    if (IsPost)
+    {
+        Response.ContentType = "application/json";
+
+        string body = new StreamReader(Request.InputStream).ReadToEnd();
+
+        dynamic data = Json.Decode(body);
+
+        string action = data.action ?? "";
+        string domain = data.domain ?? "";
+        string branchGuid = data.branchGuid ?? "";
+        string staffGuid = data.staffGuid ?? "";
+        string staffName = data.staffName ?? "";
+        string avatarUrl = data.avatarUrl ?? "";
+        string content = data.content ?? "";
+        string replyGuid = data.replyGuid ?? "";
+        string imageUrl = data.imageUrl ?? "";
+        string timeSent = DateTime.Now.ToString();
+
+        var branch = Db.Table<pp_branch>()
+                    .Where(b => b.BranchGuid == branchGuid)
+                    .FirstOrDefault();
+
+        if (action == "send")
+        {
+            var messages = branch.Messages;
+
+            var newMessage = new MessageJson
+            {
+                AvatarUrl = avatarUrl,
+                Content = content,
+                Guid = Guid.NewGuid().ToString(),
+                ImageUrl = imageUrl,
+                ReplyGuid = replyGuid,
+                StaffGuid = staffGuid,
+                StaffName = staffName,
+                TimeSent = timeSent
+            };
+
+            messages.Add(newMessage);
+
+            branch.Messages = messages;
+            Db.Update(branch);
+
+            string targetAPI = $"http://localhost:64577/admin/chat/appchatapi.cshtml?branch={branchGuid}";
+
+            var client = new WebClient();
+            client.Headers["Content-Type"] = "application/json";
+
+            string jsonResponse = Json.Encode(newMessage);
+
+            string result = client.UploadString(targetAPI, "POST", jsonResponse);
+
+            Response.Write(Json.Encode(new
+            {
+                success = true,
+                message = "Sent",
+                Result = result
+            }));
+        }
+    }
+    else
+    {
+        Response.ContentType = "application/json";
+
+        var domain = Request["domain"] ?? "";
+        var branchGuid = Request["branchGuid"] ?? "";
+        var branchName = Request["branchName"] ?? "";
+
+
+        var group = Db.Table<pp_chat_group>()
+            .Join(Db.Table<pp_branch>(),
+            g => g.Id,
+            b => b.GroupId,
+            (ng, nb) => new { ng, nb })
+            .Where(w => w.ng.Domain == domain && w.nb.BranchGuid == branchGuid)
+            .Select(s => new { Group = s.ng, Branch = s.nb })
+            .FirstOrDefault();
+
+        if (group == null)
+        {
+            var newGroup = new pp_chat_group
+            {
+                Domain = domain,
+                CreatedDate = DateTime.Now
+            };
+            Db.Insert(newGroup);
+
+            var newBranch = new pp_branch
+            {
+                GroupId = newGroup.Id,
+                BranchGuid = branchGuid,
+                BranchName = branchName
+            };
+            Db.Insert(newBranch);
+
+            Response.Write(Json.Encode(new
+            {
+                success = true,
+                boxTitle = "Support " + branchName
+            }));
+            return;
+        }
+        else
+        {
+            var messages = group.Branch.Messages;
+
+            Response.Write(Json.Encode(new
+            {
+                success = true,
+                boxTitle = "Support " + branchName,
+                Messages = messages
+            }));
+            return;
+        }
+    }
+}
+

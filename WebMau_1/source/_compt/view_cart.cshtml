@@ -1,0 +1,429 @@
+﻿@inherits MyWebPage
+@using SLK.Common
+@using System.Web.Script.Serialization;
+@using System.Collections;
+@using System;
+@functions {
+    [Component(
+        Type = ComptType.Page_Template,
+        ComptName = "en:View cart template|vi:Mẫu trang xem giỏ hàng",
+        PathPostfix = "/{0}",
+        PageType = "list", NodeType = "product")]
+    public class ViewModel : PageListModel
+    {
+        public static ViewModel Default => new ViewModel()
+        {
+            Title = "View Cart",
+        };
+
+        public List<ShoppingCartDetails> Cart { get; set; }
+        public decimal Subtotal { get; set; }
+        public int Quantity { get; set; }
+    }
+    /*end_viewmodel*/
+    private ViewModel _data;
+    private ViewModel Data => _data ?? (_data = ViewModel.Default);
+    private MyTranslator Text => new MyTranslator(Data?.Phrases);
+
+}
+@{
+    if (IsPost)
+    {
+        Response.ContentType = "application/json";
+
+        var json = new StreamReader(Request.InputStream).ReadToEnd();
+        var serializer = new JavaScriptSerializer();
+        var postData = serializer.Deserialize<Dictionary<string, object>>(json);
+        var cartLines = new ShoppingCart(this.Context);
+
+        if (postData["action"].ToString() == "update")
+        {
+            try
+            {
+                var updateItem = postData["data"] as ArrayList;
+                foreach (var item in updateItem)
+                {
+                    var obj = item as Dictionary<string, object>;
+                    var id = Convert.ToInt32(obj["id"]);
+                    var qty = Convert.ToInt32(obj["qty"]);
+
+                    var product = Db.Table<PP_Product>()
+                                .Where(p => p.Id == id)
+                                .FirstOrDefault();
+
+                    cartLines.Update(product, qty);
+                }
+
+                var total = cartLines.GetSubTotal();
+
+                Response.Write(Json.Encode(new
+                {
+                    success = true,
+                    message = "Update cart success!!!",
+                    subtotal = total,
+                    totalQty = cartLines.GetQuantity()
+                }));
+                return;
+            }
+            catch (Exception ex)
+            {
+                Response.Write(Json.Encode(new
+                {
+                    success = false,
+                    message = ex.Message
+                }));
+                return;
+            }
+        }
+
+        if (postData["action"].ToString() == "delete")
+        {
+            try
+            {
+                int id = Convert.ToInt32(postData["id"]);
+
+                var product = Db.Table<PP_Product>()
+                    .Where(p => p.Id == id)
+                    .FirstOrDefault();
+
+                cartLines.RemoveFromCart(product);
+
+                Response.Write(Json.Encode(new
+                {
+                    success = true,
+                    message = "Removed 1 item in cart!",
+                    subtotal = cartLines.GetSubTotal(),
+                    totalQty = cartLines.GetQuantity()
+                }));
+                return;
+            }
+            catch (Exception ex)
+            {
+                Response.Write(Json.Encode(new
+                {
+                    success = false,
+                    message = ex.Message
+                }));
+                return;
+            }
+        }
+    }
+
+    _data = LoadData<ViewModel>(key: $"{LangId}-{FileName}#{NodeSlug}", setup: (model) =>
+    {
+        model = model ?? new ViewModel();
+
+        var cart = new ShoppingCart(this.Context);
+
+        model.Cart = cart.GetCartLines();
+        model.Subtotal = cart.GetSubTotal();
+        model.Quantity = cart.GetQuantity();
+
+        var page = Db.GetOne<PP_Page>(PageId);
+        if (page == null) return null;
+
+        model.Title = page.Title;
+        model.MetaDescription = page.MetaDescription;
+        model.MetaKeywords = page.MetaKeywords;
+
+        return model;
+    });
+
+    Layout = $"~/_layouts/_layout{Root.LayoutId}.cshtml";
+    Page.Title = Data.Title;
+    Page.Description = Data.MetaDescription;
+    Page.Keywords = Data.MetaKeywords;
+    Page.IndexPageRunning = true;
+}
+
+<main class="main">
+    @{
+        var cartItems = Data.Cart;
+    }
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.htm" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                <span>></span> Shop
+                <span>></span> Cart
+            </div>
+        </div>
+    </div>
+    <div class="container mb-80 mt-50">
+        <div class="row">
+            <div class="col-lg-8 mb-40">
+                <h1 class="heading-2 mb-10">Your Cart</h1>
+                <div class="d-flex justify-content-between">
+                    <h6 class="text-body">There @(Data.Quantity == 1 ? "is" : "are") <span class="text-brand totalQuantity">@Data.Quantity</span> products in your cart</h6>
+                    <h6 class="text-body"><a href="#" class="text-muted"><i class="fi-rs-trash mr-5"></i>Clear Cart</a></h6>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="table-responsive shopping-summery">
+                    <table class="table table-wishlist">
+                        <thead>
+                            <tr class="main-heading">
+                                <th class="custome-checkbox start pl-30">
+                                    <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox11" value="">
+                                    <label class="form-check-label" for="exampleCheckbox11"></label>
+                                </th>
+                                <th scope="col" colspan="2">Product</th>
+                                <th scope="col">Unit Price</th>
+                                <th scope="col" style="text-align:center;">Quantity</th>
+                                <th scope="col">Subtotal</th>
+                                <th scope="col" class="end text-center">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in cartItems.EmptyIfNull().Select((x, y) => new { x, y }))
+                            {
+                                <tr class="cartDetail">
+                                    <input class="itemId" type="hidden" id="cartItem@(item.y)" value="@item.x.Product.Id" />
+                                    <td class="custome-checkbox pl-30">
+                                        <input class="form-check-input" type="checkbox" id="itemCbx@(item.y)" value="">
+                                        <label class="form-check-label" for="itemCbx@(item.y)"></label>
+                                    </td>
+                                    <td class="image product-thumbnail"><img src="@item.x.Product.ImageUrl" alt="#"></td>
+                                    <td class="product-des product-name">
+                                        <h6 class="mb-5"><a class="product-name mb-10 text-heading" href="shop-product-right">@item.x.Product.Title</a></h6>
+                                        <div class="product-rate-cover">
+                                            <div class="product-rate d-inline-block">
+                                                <div class="product-rating" style="width:90%">
+                                                </div>
+                                            </div>
+                                            <span class="font-small ml-5 text-muted"> (4.0)</span>
+                                        </div>
+                                    </td>
+                                    <td class="price" data-title="Price">
+                                        <h4 class="text-body unitPrice" id="unit@(item.y)">$@(item.x.Product.PromotionPrice == 0 ? item.x.Product.Price.ToString("0.0") : item.x.Product.PromotionPrice.ToString("0.0"))</h4>
+                                    </td>
+                                    <td class="text-center detail-info" data-title="Stock">
+                                        <div class="detail-extralink mr-15">
+                                            <div class="detail-qty border radius">
+                                                <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
+                                                <input type="number" name="quantity" class="qty-val cartItemQty" value="@item.x.Quantity" min="1" id="itemQty@(item.y)">
+                                                <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="price" data-title="Price">
+                                        @{ decimal subtotal = item.x.Price * item.x.Quantity; }
+                                        <h4 class="text-brand itemSubTotal" id="itemSub@(item.y)">$@subtotal.ToString("0.0")</h4>
+                                    </td>
+                                    <td class="action text-center" data-title="Remove"><a href="#" title="remove" removeId="@item.x.Product.Id" class="text-body itemRemove"><i class="fa-solid fa-trash"></i></a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="divider-2 mb-30"></div>
+                <div class="cart-action d-flex justify-content-between">
+                    <a class="btn proceedCoutBtn d-flex justify-content-center align-items-center">
+                        <i class="fi-rs-arrow-left"></i>Continue Shopping
+                    </a>
+                    <a class="btn proceedCoutBtn d-flex justify-content-center align-items-center mr-10 mb-sm-15 updateCart">
+                        <i class="fi-rs-refresh"></i>Update Cart
+                    </a>
+                </div>
+                <div class="row mt-50">
+                    <div class="col-lg-7">
+                        <div class="calculate-shiping p-40 border-radius-15 border">
+                            <h4 class="mb-10">Calculate Shipping</h4>
+                            <p class="mb-30"><span class="font-lg text-muted">Flat rate:</span><strong class="text-brand">5%</strong></p>
+                            <form class="field_form shipping_calculator">
+                                <div class="form-row">
+                                    <div class="form-group col-lg-12">
+                                        <div class="custom_select">
+                                            <select class="form-control select-active w-100">
+                                                <option value="">United Kingdom</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row row">
+                                    <div class="form-group col-lg-6">
+                                        <input required="required" placeholder="State / Country" name="name" type="text">
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <input required="required" placeholder="PostCode / ZIP" name="name" type="text">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="p-40">
+                            <h4 class="mb-10">Apply Coupon</h4>
+                            <p class="mb-30"><span class="font-lg text-muted">Using A Promo Code?</span></p>
+                            <form action="#">
+                                <div class="d-flex justify-content-between">
+                                    <input class="font-medium mr-15 coupon" name="Coupon" placeholder="Enter Your Coupon">
+                                    <button class="btn proceedCoutBtn d-flex justify-content-center align-items-center"><i class="fi-rs-label"></i>Apply</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="border p-md-4 cart-totals ml-30">
+                    <div class="table-responsive">
+                        <table class="table no-border">
+                            <tbody>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Subtotal</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h4 class="text-brand text-end subtotal">$@Data.Subtotal.ToString("0.0")</h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td scope="col" colspan="2">
+                                        <div class="divider-2 mt-10 mb-10"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Shipping</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h5 class="text-heading text-end">Free</h5>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Estimate for</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h5 class="text-heading text-end">United Kingdom</h5>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td scope="col" colspan="2">
+                                        <div class="divider-2 mt-10 mb-10"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Total</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h4 class="text-brand text-end totalPrice">$@Data.Subtotal.ToString("0.0")</h4>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="/shopping-checkout" class="btn mb-20 w-100 proceedCoutBtn checkout d-flex justify-content-center align-items-center">
+                        Proceed To CheckOut&nbsp;<i class="fa-solid fa-cart-shopping"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<link rel="stylesheet" href="~/assets/css/main-1.css" />
+
+@section scripts{
+    <script>
+
+        //remove cart item
+        function resetIndex() {
+            $('tr.cartDetail').each((j, k) => {
+                $(k).find('.itemId').attr('id', `cartItem${j}`);
+                $(k).find('.unitPrice').attr('id', `unit${j}`);
+                $(k).find('.cartItemQty').attr('id', `itemQty${j}`);
+                $(k).find('.itemSubTotal').attr('id', `itemSub${j}`);
+            })
+        }
+
+        $('.itemRemove').on('click', function (e) {
+            e.preventDefault();
+
+            var a = $(this);
+            $.ajax({
+                url: '/@NodeSlug',
+                type: 'POST',
+                data: JSON.stringify({
+                    action: 'delete',
+                    id: $(this).attr('removeId')
+                }), success: function (res) {
+                    if (res.success) {
+                        a.closest('tr').remove();
+                        $('.cartNotification').css('background-color', 'red');
+                        showNotification(res.message);
+                        resetIndex();
+                        reloadCart();
+                        $('span.totalQuantity').text(res.totalQty);
+                        $('h4.subtotal').text(`$${res.subtotal.toFixed(1)}`);
+                        $('h4.totalPrice').text(`$${res.subtotal.toFixed(1)}`);
+                    } else {
+                        showNotification(res.message);
+                    }
+                }, error: function (er) {
+                    console.log('error', er);
+                }
+            })
+        })
+
+        //update cart
+        $('.updateCart').on('click', function (e) {
+            e.preventDefault();
+
+            let updateObj = [];
+
+            $('tr.cartDetail').each((idx, item) => {
+                var unit = $(`h4#unit${idx}`).text().replace(/[^0-9.]/g, '');
+                var qty = $(`input#itemQty${idx}`).val();
+
+                var subtotal = (unit * qty) / 10;
+                $(`h4#itemSub${idx}`).text(`$${subtotal.toFixed(1)}`);
+
+                var updateId = $(`input#cartItem${idx}`).val();
+                updateObj.push({
+                    id: updateId,
+                    qty: qty
+                });
+            })
+
+            console.log(updateObj);
+
+            $.ajax({
+                url: '/@NodeSlug',
+                type: 'POST',
+                data: JSON.stringify({
+                    action: 'update',
+                    data: updateObj
+                }), success: function (res) {
+                    if (res.success) {
+                        showAlert('Success', res.message, 'success');
+                        reloadCart();
+                        $('h4.subtotal').text(`$${res.subtotal.toFixed(1)}`);
+                        $('h4.totalPrice').text(`$${res.subtotal.toFixed(1)}`);
+                        $('span.totalQuantity').text(res.totalQty);
+                    } else {
+                        showAlert('Error', res.message, 'warning');
+                    }
+                }, error: function (er) {
+                    console.log('error', er);
+                }
+            })
+        })
+
+        //checkout
+        $('.checkout').on('click', function (e) {
+            e.preventDefault();
+            if ($('span.totalQuantity').text() == 0) {
+                showAlert('failed', 'Please add products to cart to checkout!', 'warning');
+                return;
+            }
+            window.location.href = '/shopping-checkout';
+        })
+
+    </script>
+}

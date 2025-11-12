@@ -1,0 +1,485 @@
+﻿@*@inherits MyWebPage
+@using SLK.Common
+@functions {
+    [Component(
+        Type = ComptType.Page_Template,
+        ComptName = "en:Product single template|vi:Mẫu trang chi tiết sản phẩm",
+        PathPostfix = "/{0}.html",
+        PageType = "item", NodeType = "product")]
+    public class ViewModel
+    {
+        public IDictionary<string, string> Phrases { get; set; } = new Dictionary<string, string>();
+
+        public string Title { get; set; }
+
+        public string MetaDescription { get; set; }
+
+        public string MetaKeywords { get; set; }
+
+        public VM_Product Product { get; set; }
+
+        public static ViewModel Default => new ViewModel()
+        {
+            Title = "Nest",
+        };
+
+    }/*end_viewmodel*/
+    private ViewModel _data;
+    private ViewModel Data => _data ?? (_data = ViewModel.Default);
+    private MyTranslator Text => new MyTranslator(Data?.Phrases);
+    private FieldExtractor<PP_Contact> field = new FieldExtractor<PP_Contact>();
+    private PP_Contact model = new PP_Contact() { Status = "register" };
+}
+@{
+
+
+    _data = LoadData<ViewModel>(key: $"{LangId}-{FileName}#{NodeSlug}", setup: (model) =>
+    {
+        model = model ?? new ViewModel();
+
+        var product = Db.Table<PP_Product>().Where(p => p.NodePath == NodeSlug)
+        .EmptyIfNull()
+        .Select(p => new VM_Product
+        {
+            Id = p.Id,
+            Title = p.Title,
+            Price = p.Price,
+            PromotionPrice = p.PromotionPrice,
+            PromotionPercent = p.PromotionPercent,
+            Content = p.Content,
+            ProductState = p.ProductState
+        })
+        .FirstOrDefault();
+
+        model.Product = product;
+
+        var page = Db.GetOne<PP_Page>(PageId);
+        if (page == null) return null;
+
+        model.Title = page.Title;
+        model.MetaDescription = page.MetaDescription;
+        model.MetaKeywords = page.MetaKeywords;
+
+        return model;
+    });
+
+    Layout = $"~/_layouts/_layout{Root.LayoutId}.cshtml";
+    Page.Title = Data.Title;
+    Page.Description = Data.MetaDescription;
+    Page.Keywords = Data.MetaKeywords;
+    Page.IndexPageRunning = true;
+}
+
+
+<main class="container-fluid">
+    <div class="container-fluid px-5" style="max-width: 1450px;">
+        <div class="breadcrumb my-4 d-flex justify-content-start align-items-center">
+            <i class="fa-regular fa-house"></i>
+            <span class="mx-3"> > </span>
+            <a href="" class="mb-0">Home</a>
+            <span class="mx-3"> > </span>
+            <a href="" class="mb-0">Vegetables & tubers</a>
+            <span class="mx-3"> > </span>
+            <p class="mb-0">Seeds of Change Organic</p><br>
+            <hr class="d-block">
+        </div>
+        <hr>
+
+        <div class="product">
+            <div class="row">
+
+                <div class="col-9">
+                    <div class="row">
+                        <div class="col-12 col-lg-6 ">
+                            <div class="slider-for w-100">
+                                <div class="mainZoomItem">
+                                    <img class="zoomImg img-fluid" src="../assets/imgs/shop/product-1-1.jpg" alt="">
+                                </div>
+                                <div class="mainZoomItem">
+                                    <img class="zoomImg img-fluid" src="../assets/imgs/shop/product-1-2.jpg" alt="">
+                                </div>
+                                <div class="mainZoomItem">
+                                    <img class="zoomImg img-fluid" src="../assets/imgs/shop/product-2-1.jpg" alt="">
+                                </div>
+                                <div class="mainZoomItem">
+                                    <img class="zoomImg img-fluid" src="../assets/imgs/shop/product-2-2.jpg" alt="">
+                                </div>
+                                <div class="mainZoomItem">
+                                    <img class="zoomImg img-fluid" src="../assets/imgs/shop/product-3-1.jpg" alt="">
+                                </div>
+                            </div>
+                            <div class="slider-nav mt-4">
+                                <div class="slick-item">
+                                    <img src="../assets/imgs/shop/product-1-1.jpg" alt="">
+                                </div>
+                                <div class="slick-item">
+                                    <img src="../assets/imgs/shop/product-1-2.jpg" alt="">
+                                </div>
+                                <div class="slick-item">
+                                    <img src="../assets/imgs/shop/product-2-1.jpg" alt="">
+                                </div>
+                                <div class="slick-item">
+                                    <img src="../assets/imgs/shop/product-2-2.jpg" alt="">
+                                </div>
+                                <div class="slick-item">
+                                    <img src="../assets/imgs/shop/product-3-1.jpg" alt="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 detailItems">
+
+                            @(state.Trim() != "" ? $"<div class=\"saleOff\"><span>{state}</span></div>" : "")
+
+                            <div class="detail-name py-4">
+                                <h1>@Data.Product.Title</h1>
+                            </div>
+                            <div class="detail-rating">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <span>(32 reviews)</span>
+                            </div>
+                            <div class="row py-3 detail-price">
+                                <div class="col-3 text-center">
+                                    <h1>$@(promotionPrice == 0 ? price : promotionPrice)</h1>
+                                </div>
+                                <div class="col-9">
+                                    <p>
+                                        @(promotionPercent != 0 ? promotionPercent + "% off" : "")
+                                    </p>
+                                    <h2>@(promotionPrice == 0 ? "" : $"${price}")</h2>
+                                </div>
+                            </div>
+                            <div class="detail-summary">
+                                @content
+                            </div>
+                            <div class="d-flex flex-row align-items-center detail-size">
+                                <h6 class="m-0">Size/Weight: </h6>
+                                <ul class="m-0">
+                                    <li class="d-inline-block mx-1"><a href="">50g</a></li>
+                                    <li class="d-inline-block mx-1"><a class="active" href="">60g</a></li>
+                                    <li class="d-inline-block mx-1"><a href="">80g</a></li>
+                                    <li class="d-inline-block mx-1"><a href="">100g</a></li>
+                                    <li class="d-inline-block mx-1"><a href="">150g</a></li>
+                                </ul>
+                            </div>
+                            <div class="d-flex flex-row align-items-center my-3 detail-options">
+                                <input class="mx-1" type="number" id="quantity" min="1" value="1">
+                                <button class="mx-2 detail-btnAddToCart" type="button" productId="@productId">
+                                    <i class="fa-solid fa-cart-shopping"></i>Add to cart
+                                </button>
+                                <div class="mx-2 d-optionIcon d-flex align-items-center justify-content-center border">
+                                    <a href=""><i class="fa-regular fa-heart"></i></a>
+                                </div>
+                                <div class="mx-2 d-optionIcon d-flex align-items-center justify-content-center border">
+                                    <a href=""><i class="fa-solid fa-shuffle"></i></a>
+                                </div>
+                            </div>
+                            <div class="row detail-last mt-5">
+                                <div class="col-4">
+                                    <p>Type: <span>Organic</span></p>
+                                    <p>MFG: <span>Jun 4.2024</span></p>
+                                    <p>LIFE: <span>70 days</span></p>
+                                </div>
+                                <div class="col-8">
+                                    <p>SKU: <a href=""><span>FWM15VKT</span></a></p>
+                                    <p>
+                                        Tags: <a href=""><span>Snack</span></a>,
+                                        <a href=""><span>Organic</span></a>,
+                                        <a href=""><span>Brown</span></a>
+                                    </p>
+                                    <p>Stock: <span>8 Items In Stock</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border my-4 p-4 detailDescription">
+                        <div>
+                            <ul class="mt-4">
+                                <li class="active descriptionMenu d-inline-block me-3">
+                                    <a href="">Description</a>
+                                </li>
+                                <li class="descriptionMenu d-inline-block me-3"><a href="">Additional info</a></li>
+                                <li class="descriptionMenu d-inline-block me-3"><a href="">Vendor</a></li>
+                                <li class="descriptionMenu d-inline-block me-3"><a href="">Reviews(3)</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p>
+                                Uninhibited carnally hired played in whimpered dear gorilla koala depending and much
+                                yikes off far quetzal goodness and from for grimaced goodness unaccountably and
+                                meadowlark near unblushingly crucial scallop tightly neurotic hungrily some and dear
+                                furiously this apart.
+
+                                Spluttered narrowly yikes left moth in yikes bowed this that grizzly much hello on
+                                spoon-fed that alas rethought much decently richly and wow against the frequent
+                                fluidly at formidable acceptably flapped besides and much circa far over the
+                                bucolically hey precarious goldfinch mastodon goodness gnashed a jellyfish and one
+                                however because.
+                            </p>
+                            <div class="row">
+                                <div class="col-3">
+                                    <ul>
+                                        <li>Type Of Packing</li>
+                                        <li>Color
+                                        <li>Quantity Per Case</li>
+                                        <li>Ethyl Alcohol</li>
+                                        <li>Piece In One</li>
+                                    </ul>
+                                </div>
+                                <div class="col-9">
+                                    <ul class="desc-ul">
+                                        <li>Bottle</li>
+                                        <li>Green, Pink, Powder Blue, Purple</li>
+                                        <li>100ml</li>
+                                        <li>70%</li>
+                                        <li>Carton</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <hr>
+                            <p>
+                                Laconic overheard dear woodchuck wow this outrageously taut beaver hey hello far
+                                meadowlark imitatively egregiously hugged that yikes minimally unanimous pouted
+                                flirtatiously as beaver beheld above forward energetic across this jeepers
+                                beneficently cockily less a the raucously that magic upheld far so the this where
+                                crud then below after jeez enchanting drunkenly more much wow callously irrespective
+                                limpet.
+                            </p>
+                            <h4>Packaging & Delivery</h4>
+                            <hr>
+                            <p>
+                                Less lion goodness that euphemistically robin expeditiously bluebird smugly scratched
+                                far while thus cackled sheepishly rigid after due one assenting regarding censorious
+                                while occasional or this more crane went more as this less much amid overhung
+                                anathematic because much held one exuberantly sheep goodness so where rat wry well
+                                concomitantly.
+
+                                Scallop or far crud plain remarkably far by thus far iguana lewd precociously and
+                                and less rattlesnake contrary caustic wow this near alas and next and pled the yikes
+                                articulate about as less cackled dalmatian in much less well jeering for the thanks
+                                blindly sentimental whimpered less across objectively fanciful grimaced wildly some
+                                wow and rose jeepers outgrew lugubrious luridly irrationally attractively dachshund.
+                            </p>
+                            <h4>Suggested Use</h4>
+                            <p>Refrigeration not necessary.</p>
+                            <p>Stir before serving</p>
+                            <h4>Other Ingredients</h4>
+                            <p>Organic raw pecans, organic raw cashews.</p>
+                            <p>This butter was produced using a LTG (Low Temperature Grinding) process</p>
+                            <p>
+                                Made in machinery that processes tree nuts but does not process peanuts, gluten,
+                                dairy or soy
+                            </p>
+                            <h4>Warnings</h4>
+                            <p>Oil separation occurs naturally. May contain pieces of shell.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-3">
+                    <div class="detailRightMenu stickyRightMenu">
+                        <div class="border p-4 rightMenu-category">
+                            <div class="position-relative">
+                                <h4 class="mt-0">Category</h4>
+                                <hr class="m-0">
+                            </div>
+                            <div class="rm-category-item d-flex justify-content-between">
+                                <div>
+                                    <img src="../assets/imgs/theme/icons/category-1.svg" alt="" width="30px">
+                                    <a href="">Milk and Dairies</a>
+                                </div>
+                                <div>
+                                    <span>33</span>
+                                </div>
+                            </div>
+                            <div class="rm-category-item d-flex justify-content-between">
+                                <div>
+                                    <img src="../assets/imgs/theme/icons/category-2.svg" alt="" width="30px">
+                                    <a href="">Fresh Fruit</a>
+                                </div>
+                                <div>
+                                    <span>33</span>
+                                </div>
+                            </div>
+                            <div class="rm-category-item d-flex justify-content-between">
+                                <div>
+                                    <img src="../assets/imgs/theme/icons/category-3.svg" alt="" width="30px">
+                                    <a href="">Clothing & beauty</a>
+                                </div>
+                                <div>
+                                    <span>33</span>
+                                </div>
+                            </div>
+                            <div class="rm-category-item d-flex justify-content-between">
+                                <div>
+                                    <img src="../assets/imgs/theme/icons/category-4.svg" alt="" width="30px">
+                                    <a href="">Pet Foods & Toy</a>
+                                </div>
+                                <div>
+                                    <span>33</span>
+                                </div>
+                            </div>
+                            <div class="rm-category-item d-flex justify-content-between">
+                                <div>
+                                    <img src="../assets/imgs/theme/icons/category-5.svg" alt="" width="30px">
+                                    <a href="">Baking material</a>
+                                </div>
+                                <div>
+                                    <span>33</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rightMenu-fillPrice border p-4 my-4">
+                            <div class="position-relative">
+                                <h4 class="mt-0">Fill by price</h4>
+                                <hr class="m-0">
+                            </div>
+                            <form action="">
+                                <div class="fillRange mt-4">
+                                    <div class="row position-relative">
+                                        <div class="col pe-0">
+                                            <input type="range" class="form-range range4" min="0" max="1000"
+                                                   value="0" id="range4">
+                                            From:&nbsp;<output for="range4" class="rangeValue" id="rangeValue"
+                                                               aria-hidden="true"></output>
+                                        </div>
+                                        <div class="col ps-0">
+                                            <input type="range" class="form-range range4" min="1000" max="2000"
+                                                   value="2000" id="range4">
+                                            To:&nbsp;<output for="range4" class="rangeValue" id="rangeValue"
+                                                             aria-hidden="true"></output>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="my-3 rightMenuChecker">
+                                    <h6>Color</h6>
+                                    <div class="form-check colorChecker">
+                                        <input class="position-relative colorCheckbox form-check-input"
+                                               type="checkbox" value="" id="checkDefault">
+                                        <label class="form-check-label" for="checkDefault">
+                                            Red (56)
+                                        </label>
+                                    </div>
+                                    <div class="form-check colorChecker my-2">
+                                        <input class="position-relative colorCheckbox form-check-input"
+                                               type="checkbox" value="" id="checkDefault1">
+                                        <label class="form-check-label" for="checkDefault1">
+                                            Green (78)
+                                        </label>
+                                    </div>
+                                    <div class="form-check colorChecker">
+                                        <input class="position-relative colorCheckbox form-check-input"
+                                               type="checkbox" value="" id="checkDefault2">
+                                        <label class="form-check-label" for="checkDefault2">
+                                            Blue (54)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="my-3 rightMenuChecker">
+                                    <h6>Item Condition</h6>
+                                    <div class="form-check colorChecker">
+                                        <input class="position-relative colorCheckbox form-check-input"
+                                               type="checkbox" value="" id="checkDefault3">
+                                        <label class="form-check-label" for="checkDefault3">
+                                            New (1506)
+                                        </label>
+                                    </div>
+                                    <div class="form-check colorChecker my-2">
+                                        <input class="position-relative colorCheckbox form-check-input"
+                                               type="checkbox" value="" id="checkDefault4">
+                                        <label class="form-check-label" for="checkDefault4">
+                                            Refurbished (27)
+                                        </label>
+                                    </div>
+                                    <div class="form-check colorChecker">
+                                        <input class="position-relative colorCheckbox form-check-input"
+                                               type="checkbox" value="" id="checkDefault5">
+                                        <label class="form-check-label" for="checkDefault5">
+                                            Used (45)
+                                        </label>
+                                    </div>
+                                    <button type="submit" class="btn btn-success btnFilter mt-3 ms-2" type="button">
+                                        <span><i class="fa-solid fa-filter"></i> Filter</span>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="newProducts border p-4">
+                            <div class="position-relative">
+                                <h4 class="mt-0 newProductTitle">New Products</h4>
+                                <hr class="m-0">
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-4 p-0">
+                                    <a href="" title="new product">
+                                        <img src="../assets/imgs/shop/thumbnail-3.jpg"
+                                             width="100%" alt="new product">
+                                    </a>
+                                </div>
+                                <div class="col-8">
+                                    <h5 class="my-1 newProductName"><a href="">Chen Cardigan</a></h5>
+                                    <div class="my-2">
+                                        <span class="newProductPrice">$99.50</span>
+                                    </div>
+                                    <div class="newProductRating">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 p-0">
+                                    <a href="" title="new product">
+                                        <img src="../assets/imgs/shop/thumbnail-3.jpg"
+                                             width="100%" alt="new product">
+                                    </a>
+                                </div>
+                                <div class="col-8">
+                                    <h5 class="my-1 newProductName"><a href="">Chen Cardigan</a></h5>
+                                    <div class="my-2">
+                                        <span class="newProductPrice">$99.50</span>
+                                    </div>
+                                    <div class="newProductRating">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 p-0">
+                                    <a href="" title="new product">
+                                        <img src="../assets/imgs/shop/thumbnail-3.jpg"
+                                             width="100%" alt="new product">
+                                    </a>
+                                </div>
+                                <div class="col-8">
+                                    <h5 class="my-1 newProductName"><a href="">Chen Cardigan</a></h5>
+                                    <div class="my-2">
+                                        <span class="newProductPrice">$99.50</span>
+                                    </div>
+                                    <div class="newProductRating">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>*@
+

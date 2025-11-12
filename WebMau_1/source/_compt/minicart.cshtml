@@ -1,0 +1,32 @@
+﻿@inherits MyWebPage
+@{
+    Layout = null;
+    var cart = new ShoppingCart(this.Context);
+    var cartItems = cart.GetCartLines().EmptyIfNull().ToList();
+}
+
+@if (!cartItems.Any())
+{
+    <div class="blankCartNoti d-flex align-items-center h-100 newCartItem">
+        <span>There are currently no products in the cart.</span>
+    </div>
+}
+else
+{
+    foreach (var item in cartItems)
+    {
+        <div class="cartItem newCartItem list-group-item d-flex justify-content-between my-2">
+            <input id="productId" type="hidden" value="@item.Product.Id" />
+            <a href="/@item.Product.NodePath">
+                <img src="@item.Product.ImageUrl" width="100px"
+                     alt="cart product">
+            </a>
+            <div style="padding-left: 20px; margin-right: auto;">
+                <h5><a href="/@item.Product.NodePath">@item.Product.Title</a></h5>
+                <span>@item.Quantity × $@item.Product.Price</span>
+            </div>
+            <a class="removeFromCart" href="" data-productId="@item.Product.Id">x</a>
+        </div>
+        <li class="newCartItem"><hr></li>
+    }
+}

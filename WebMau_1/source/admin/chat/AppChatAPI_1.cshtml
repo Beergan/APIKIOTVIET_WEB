@@ -1,0 +1,38 @@
+﻿@inherits MyWebPage
+@{
+    Layout = null;
+}
+
+@{
+    string branchGuid = "DEVLOHOCCODE2025";
+    if (IsPost)
+    {
+        if (Request["branchGuid"] == branchGuid)
+        {
+            string body = new StreamReader(Request.InputStream).ReadToEnd();
+
+            var message = Json.Decode<MessageJson>(body);
+
+            Response.Write($@"
+            <script>
+                $('h1.content').text('{HttpUtility.JavaScriptStringEncode(message.Content)}');
+            </script>");
+            return;
+        }
+    }
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+<body>
+    <h1 class="content"></h1>
+    
+    <script src="~/assets/js/jquery.js"></script>
+</body> 
+</html>
+
