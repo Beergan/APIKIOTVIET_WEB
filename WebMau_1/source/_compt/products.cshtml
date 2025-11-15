@@ -1,5 +1,6 @@
 ﻿@inherits MyWebPage
 @using SLK.Common
+
 @functions {
     [Component(
         Type = ComptType.Page_Template,
@@ -20,14 +21,41 @@
 }
 
 @{
+    var token = new KiotAPIClient().GetAccessToken();
+
     var client = new KiotAPIClient(
         "https://public.kiotapi.com/",
-        "nestmart",
-        "F625634318E4F75291ED3441C030EEA5DC949C4D",
-        "eyJhbGciOiJSUzI1NiIsInR5cCI6ImF0K2p3dCJ9.eyJuYmYiOjE3NjI4NTAyOTksImV4cCI6MTc2MjkzNjY5OSwiaXNzIjoiaHR0cDovL2lkLmtpb3R2aWV0LnZuIiwiY2xpZW50X2lkIjoiM2RmNzUyMGUtNTA2MS00NGFhLWFkNzAtZGZlYzI2ZTg2OTkyIiwiY2xpZW50X1JldGFpbGVyQ29kZSI6Im5lc3RtYXJ0IiwiY2xpZW50X1JldGFpbGVySWQiOiI1MDA5Nzc5NjciLCJjbGllbnRfVXNlcklkIjoiMTAwMDA0NTAyMSIsImNsaWVudF9TZW5zaXRpdmVBcGkiOiJUcnVlIiwiY2xpZW50X0dyb3VwSWQiOiIyNCIsImNsaWVudF9TZWNyZXRLZXkiOiJaKzl4eFBiU0Vubm45TlRtL2Y3NDVGV3hCQW1ZNVpaNHp4Q0xvdm5IdWpRPSIsImlhdCI6MTc2Mjg1MDI5OSwic2NvcGUiOlsiUHVibGljQXBpLkFjY2VzcyJdfQ.ecBvavWD7AeSX6FaPk8CPbFb4lmVZjBKMCfuBwyI3usFzmkFG5NZxreO8BZPiF0Te5u0f_iMLEyEtmPpXZEth5C8q9uKNCQx3dTJIP7DbIvY9Cxlhy2ksWmBF-ZgTuEZ4w5ZC0iPYUDPLBBh1M1sXlh60RMDy7hlIlWDK9m3JzvC5yEW-_W8PyPCFdko0ywzjuRcWsN78TXrGrcmaZkXKTPfbDJMPYfrYFMQAg5AfbH3nK7fi6jv-Z0vXSVkbOZHWsximwmMJHzJxUDd3I87gRUFvofkT7u57dQ1thz8XDauWV0HxMeclwe13WfcbFC5pShNQRntCKUa7N9ldCvIkg"
+        $"{token}"
     );
 
-    var response = client.GetProducts(12, "fullName");
+    int catId = Convert.ToInt32(Request["catId"] ?? "0");
+
+    //get product by id or at first page
+    var products = client.GetProducts(12, "fullName", catId, 0);
+
+    //get total products
+    bool end = false;
+    KiotProduct totalProduct = new KiotProduct();
+    int currentItem = 0;
+    int qtyPerLoop = 0;
+
+    while (!end)
+    {
+        qtyPerLoop += 100;
+        var data = client.GetProducts(100, "fullName", 0, currentItem).Data;
+
+        if (data.EmptyIfNull().Any())
+        {
+            totalProduct.Data = data;
+            currentItem += qtyPerLoop;
+        }
+        else
+        {
+            end = true;
+        }
+    }
+
+    var categories = client.GetCategories(100);
 
     _data = LoadData<ViewModel>(key: $"{LangId}-{FileName}#{NodeSlug}", setup: (model) =>
     {
@@ -97,13 +125,13 @@
             <div class="col-9">
                 <div class="popularProductList wow fadeInUp">
                     <div class="mt-5 wow row fadeInUp">
-                        @if (response == null)
+                        @if (products == null)
                         {
                             <div class="w-100 p-3 mb-2 bg-warning-subtle text-warning-emphasis rounded">
                                 <h3>Hiện danh mục này đã hết hàng. Vui lòng quay lại vào ngày mai!</h3>
                             </div>
                         }
-                        @foreach (var product in response.Data.Select((x, y) => new { x, y }))
+                        @foreach (var product in products.Data.Select((x, y) => new { x, y }))
                         {
 
                             <div class="gridProduct popularProduct-item col-6 col-md-4 col-lg-3 wow fadeInUp position-relative"
@@ -154,9 +182,9 @@
                                 </div>
                                 <p>By <span class="gridProductProvider">Nestfood</span></p>
                                 <div class="d-flex justify-content-between">
-                                    <div>
-                                        <h5 class="d-inline gridProductPrice">$@product.x.BasePrice.ToString("N2")</h5>
-                                        <span class="oldPrice">$@product.x.BasePrice.ToString("N2")</span>
+                                    <div class="gridItemPrice">
+                                        <h5 class="d-inline gridProductPrice">$@product.x.BasePrice.ToString("0.0")</h5>
+                                        <span class="oldPrice">$@product.x.BasePrice.ToString("0.0")</span>
                                     </div>
                                     <div class="d-inline">
                                         <button type="button" class="btn btnAddToCart detail-btnAddToCart" productId="@product.x.Id">
@@ -169,16 +197,16 @@
                     </div>
                 </div>
                 <ul class="pagination">
-                    <li class="mx-2 pageLink">
-                        <a href="">
-                            <
-                        </a>
-                    </li>
-                    <li class="mx-2 pageLink"><a href="">1</a></li>
-                    <li class="mx-2 pageLink"><a href="">2</a></li>
-                    <li class="mx-2 pageLink"><a href="">...</a></li>
-                    <li class="mx-2 pageLink"><a href="">5</a></li>
-                    <li class="mx-2 pageLink"><a href="">6</a></li>
+                    <li class="mx-2 pageLink"><a href=""><</a></li>
+
+                    @{
+                        var totalPages = Math.Ceiling(products.Total / (double)12);
+                        for (int i = 0; i < totalPages; i++)
+                        {
+                            <li class="mx-2 pageLink"><a href="/@NodeSlug?catId=@catId&page=@(i + 1)">@(i + 1)</a></li>
+                        }
+                    }
+
                     <li class="mx-2 pageLink"><a href="">></a></li>
                 </ul>
                 <div class="dayDeal my-5">
@@ -394,24 +422,29 @@
             </div>
 
             <div class="col-3 mt-4">
-                <div class="stickyRightMenu">
+                <div>
                     <div class="border p-4 rightMenu-category">
                         <div class="position-relative">
                             <h4 class="mt-0 gridRightCategory">Category</h4>
                             <hr class="m-0">
                         </div>
-                        @*@foreach (var cat in Data.categories)
-                        {
-                            <a href="/@cat.Value.First().Value.First().Key" class="rm-category-item d-flex justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <img src="../assets/imgs/theme/icons/category-1.svg" alt="category" width="30px">
-                                    <p>@cat.Value.First().Key</p>
-                                </div>
-                                <div>
-                                    <span>@cat.Value.First().Value.First().Value</span>
-                                </div>
-                            </a>
-                        }*@
+                        @{
+                            var productCount = totalProduct.Data.GroupBy(p => p.CategoryId).ToDictionary(t => t.Key, t => t.Count());
+                        }
+                        <div class="categoryList">
+                            @foreach (var cat in categories.Data.Where(c => c.ParentId != 0))
+                            {
+                                <a href="/@NodeSlug?catId=@cat.CategoryId" class="rm-category-item d-flex justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <img src="../assets/imgs/theme/icons/category-1.svg" alt="category" width="30px">
+                                        <p>@cat.CategoryName</p>
+                                    </div>
+                                    <div>
+                                        <span>@(productCount.ContainsKey(cat.CategoryId) ? productCount[cat.CategoryId] : 0)</span>
+                                    </div>
+                                </a>
+                            }
+                        </div>
                     </div>
                 </div>
 
@@ -564,3 +597,12 @@
     </div>
 </main>
 
+@section scripts {
+    <script>
+        $(document).on('click', '.pageLink a', function (e) {
+            e.preventDefault();
+            $('.pageLinkActive').removeClass('pageLinkActive');
+            $(this).closest('li').addClass('pageLinkActive');
+        })
+    </script>
+}

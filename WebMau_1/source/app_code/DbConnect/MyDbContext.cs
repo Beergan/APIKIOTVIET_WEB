@@ -26,5 +26,6 @@ public class MyDbContext : DbContext
 		modelBuilder.Entity<PP_Customer>();
 		modelBuilder.Entity<pp_chat_group>();
         modelBuilder.Entity<pp_branch>();
+        modelBuilder.Entity<pp_Kiot_AccessToken>();
 	}
 }

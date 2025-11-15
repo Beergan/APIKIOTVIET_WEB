@@ -91,7 +91,8 @@
     font-weight: bold;
 }
 
-.pageLink:hover a {
+.pageLink:hover a,
+.pageLinkActive a {
     background-color: #3BB77E;
     color: white;
 }
@@ -104,3 +105,7 @@
     .gridCountDown p {
         font-size: 13px;
     }
+
+.gridItemPrice {
+    width: min-content;
+}

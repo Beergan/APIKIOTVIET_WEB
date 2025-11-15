@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 public class VM_Product
 {
@@ -26,4 +22,33 @@ public class VM_Product
 	public bool IsBatchExpireControl { get; set; } = false;
 	public string[] Images { get; set; } = new[] { "https://placehold.co/120x120" };
 	public string Path { get; set; }
+
+	public PP_Product MapToEntity(VM_Product vm)
+	{
+		return new PP_Product
+		{
+			Id = vm.Id,
+			CreatedDate = vm.CreatedDate,
+			RetailerId = vm.RetailerId,
+			Code = vm.Code,
+			Name = vm.Name,
+			FullName = vm.FullName,
+			CategoryId = vm.CategoryId,
+			CategoryName = vm.CategoryName,
+			AllowsSale = vm.AllowsSale,
+			Type = vm.Type,
+			HasVariants = vm.HasVariants,
+			BasePrice = vm.BasePrice,
+			ConversionValue = vm.ConversionValue,
+			Description = vm.Description,
+			ModifiedDate = vm.ModifiedDate,
+			IsActive = vm.IsActive,
+			IsLotSerialControl = vm.IsLotSerialControl,
+			IsBatchExpireControl = vm.IsBatchExpireControl,
+			Images = string.Join(",", this.Images ?? Array.Empty<string>()),
+			Path = vm.Path
+		};
+	}
 }
+
+

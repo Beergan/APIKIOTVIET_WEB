@@ -47,7 +47,7 @@ public class ShoppingCart
             return;
 
         var line = CartLines.Where(l => l.Product.Id == product.Id).FirstOrDefault();
-        var price = product.PromotionPrice != 0 ? product.PromotionPrice : product.Price;
+        var price = product.BasePrice;
 
 		if (line == null)
         {
@@ -78,7 +78,7 @@ public class ShoppingCart
             return;
 
         var line = CartLines.Where(l => l.Product.Id == product.Id).FirstOrDefault();
-        var price = product.PromotionPrice != 0 ? product.PromotionPrice : product.Price;
+        var price = product.BasePrice;
 
         if (line == null)
         {
@@ -115,11 +115,11 @@ public class ShoppingCart
     {
         return CartLines.Select(i => new OrderLine()
         {
-            Title = i.Product.Title,
+            Title = i.Product.FullName,
             Price = i.Price,
             Quantity = i.Quantity,
             RowTotal = i.Price * i.Quantity,
-            PromotionEnabled = i.Product.PromotionEnabled
+            PromotionEnabled = i.Product.AllowsSale
         }).ToList();
     }
 
